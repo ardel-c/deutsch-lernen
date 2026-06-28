@@ -100,7 +100,7 @@ export default function AddItem() {
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>Word Type</label>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {['noun', 'verb', 'adjective', 'preposition', 'other'].map(type => (
+                {['noun', 'verb', 'adjective', 'adverb', 'preposition', 'other'].map(type => (
                   <button
                     key={type}
                     type="button"
@@ -167,12 +167,12 @@ export default function AddItem() {
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>German Word *</label>
-              <input required value={word} onChange={(e) => setWord(e.target.value)} style={{ width: '100%' }} placeholder={wordType === 'verb' ? 'e.g. essen' : wordType === 'adjective' ? 'e.g. schön' : wordType === 'noun' ? 'e.g. Apfel' : wordType === 'preposition' ? 'e.g. mit' : 'e.g. aber'} />
+              <input required value={word} onChange={(e) => setWord(e.target.value)} style={{ width: '100%' }} placeholder={wordType === 'verb' ? 'e.g. essen' : wordType === 'adjective' ? 'e.g. schön' : wordType === 'adverb' ? 'e.g. schnell' : wordType === 'noun' ? 'e.g. Apfel' : wordType === 'preposition' ? 'e.g. mit' : 'e.g. aber'} />
             </div>
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>English Meaning *</label>
-              <input required value={english} onChange={(e) => setEnglish(e.target.value)} style={{ width: '100%' }} placeholder={wordType === 'verb' ? 'e.g. to eat' : wordType === 'adjective' ? 'e.g. beautiful' : wordType === 'noun' ? 'e.g. Apple' : wordType === 'preposition' ? 'e.g. with' : 'e.g. but'} />
+              <input required value={english} onChange={(e) => setEnglish(e.target.value)} style={{ width: '100%' }} placeholder={wordType === 'verb' ? 'e.g. to eat' : wordType === 'adjective' ? 'e.g. beautiful' : wordType === 'adverb' ? 'e.g. quickly' : wordType === 'noun' ? 'e.g. Apple' : wordType === 'preposition' ? 'e.g. with' : 'e.g. but'} />
             </div>
 
             {wordType === 'noun' && (

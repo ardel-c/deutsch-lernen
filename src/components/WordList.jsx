@@ -47,6 +47,7 @@ export default function WordList() {
     Nouns: false,
     Verbs: false,
     Adjectives: false,
+    Adverbs: false,
     Prepositions: false,
     'Other Words': false
   });
@@ -97,8 +98,9 @@ export default function WordList() {
   const nouns = filteredWords.filter(w => w.type === 'noun');
   const verbs = filteredWords.filter(w => w.type === 'verb');
   const adjectives = filteredWords.filter(w => w.type === 'adjective');
+  const adverbs = filteredWords.filter(w => w.type === 'adverb');
   const prepositions = filteredWords.filter(w => w.type === 'preposition');
-  const others = filteredWords.filter(w => !['noun', 'verb', 'adjective', 'preposition'].includes(w.type));
+  const others = filteredWords.filter(w => !['noun', 'verb', 'adjective', 'adverb', 'preposition'].includes(w.type));
 
   const renderWordList = (title, items) => {
     if (items.length === 0 && searchQuery) return null; // Hide empty sections when searching
@@ -233,6 +235,7 @@ export default function WordList() {
           {renderWordList('Nouns', nouns)}
           {renderWordList('Verbs', verbs)}
           {renderWordList('Adjectives', adjectives)}
+          {renderWordList('Adverbs', adverbs)}
           {renderWordList('Prepositions', prepositions)}
           {renderWordList('Other Words', others)}
         </>
