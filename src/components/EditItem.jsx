@@ -257,6 +257,20 @@ export default function EditItem() {
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Related Words (Optional)</label>
                 <div style={{ border: '1px solid var(--border)', borderRadius: '10px', padding: '0.75rem', background: 'var(--bg-color)' }}>
+                  {relatedWords.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      {relatedWords.map(relId => {
+                        const w = words.find(x => x.id === relId);
+                        if (!w) return null;
+                        return (
+                          <span key={relId} style={{ background: 'var(--primary)', color: '#fff', padding: '0.3rem 0.6rem', borderRadius: '16px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            {w.word} ({w.type})
+                            <button type="button" onClick={() => setRelatedWords(prev => prev.filter(x => x !== relId))} style={{ background: 'transparent', color: '#fff', border: 'none', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', lineHeight: 1 }}>&times;</button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
                   <input 
                     type="text" 
                     placeholder="Search existing words..." 
@@ -266,15 +280,15 @@ export default function EditItem() {
                   />
                   <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                     {words
-                      .filter(w => (w.word.toLowerCase().includes(searchTerm.toLowerCase()) || w.english.toLowerCase().includes(searchTerm.toLowerCase())) && w.id !== id)
+                      .filter(w => !relatedWords.includes(w.id) && (w.word.toLowerCase().includes(searchTerm.toLowerCase()) || w.english.toLowerCase().includes(searchTerm.toLowerCase())) && w.id !== id)
                       .map(w => (
                         <label key={w.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-color)' }}>
                           <input 
                             type="checkbox" 
-                            checked={relatedWords.includes(w.id)}
-                            onChange={() => setRelatedWords(prev => prev.includes(w.id) ? prev.filter(wId => wId !== w.id) : [...prev, w.id])}
+                            checked={false}
+                            onChange={() => setRelatedWords(prev => [...prev, w.id])}
                           />
-                          {w.article ? `${w.article} ` : ''}{w.word} - <span style={{ opacity: 0.7 }}>{w.english}</span>
+                          {w.article ? `${w.article} ` : ''}{w.word} ({w.type}) - <span style={{ opacity: 0.7 }}>{w.english}</span>
                         </label>
                     ))}
                   </div>

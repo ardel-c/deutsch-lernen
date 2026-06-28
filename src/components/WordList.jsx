@@ -169,7 +169,7 @@ export default function WordList() {
                             return (
                               <span key={id}>
                                 {idx > 0 && ', '}
-                                {relWord.article ? `${relWord.article} ` : ''}{relWord.word}
+                                {relWord.article ? `${relWord.article} ` : ''}{relWord.word} ({relWord.type})
                               </span>
                             );
                           })}
