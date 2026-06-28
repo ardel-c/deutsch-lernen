@@ -160,6 +160,21 @@ export default function WordList() {
                           {w.notes}
                         </div>
                       )}
+                      {w.relatedWords && w.relatedWords.length > 0 && (
+                        <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', opacity: 0.9 }}>
+                          <span style={{ fontWeight: '600', color: 'var(--primary)' }}>Related: </span>
+                          {w.relatedWords.map((id, idx) => {
+                            const relWord = words.find(x => x.id === id);
+                            if (!relWord) return null;
+                            return (
+                              <span key={id}>
+                                {idx > 0 && ', '}
+                                {relWord.article ? `${relWord.article} ` : ''}{relWord.word}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
                       <div style={{ marginTop: '0.5rem' }}>
                         <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '12px', background: getReviewStatus(w).bg, color: getReviewStatus(w).color, fontWeight: '600' }}>
                           {getReviewStatus(w).text}

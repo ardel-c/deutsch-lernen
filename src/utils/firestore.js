@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, serverTimestamp, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, serverTimestamp, onSnapshot, orderBy, writeBatch, arrayUnion, arrayRemove } from 'firebase/firestore';
 
 export async function addWord(userId, wordData) {
   const wordsRef = collection(db, 'words');
@@ -29,7 +29,21 @@ export async function addWord(userId, wordData) {
     repetitions: 0
   };
 
-  return await addDoc(wordsRef, newWord);
+  const batch = writeBatch(db);
+  const newWordRef = doc(wordsRef);
+  batch.set(newWordRef, newWord);
+
+  if (wordData.relatedWords && wordData.relatedWords.length > 0) {
+    wordData.relatedWords.forEach(relatedId => {
+      const relRef = doc(db, 'words', relatedId);
+      batch.update(relRef, {
+        relatedWords: arrayUnion(newWordRef.id)
+      });
+    });
+  }
+
+  await batch.commit();
+  return newWordRef;
 }
 
 export async function addPhrase(userId, phraseData) {
@@ -89,7 +103,49 @@ export async function updateItem(collectionName, id, updates) {
   return await updateDoc(itemRef, updates);
 }
 
+export async function updateWord(id, updates, oldRelatedWords = []) {
+  const batch = writeBatch(db);
+  const wordRef = doc(db, 'words', id);
+  
+  batch.update(wordRef, updates);
+
+  if (updates.relatedWords) {
+    const newRelatedWords = updates.relatedWords;
+    const added = newRelatedWords.filter(rid => !oldRelatedWords.includes(rid));
+    const removed = oldRelatedWords.filter(rid => !newRelatedWords.includes(rid));
+
+    added.forEach(rid => {
+      const relRef = doc(db, 'words', rid);
+      batch.update(relRef, { relatedWords: arrayUnion(id) });
+    });
+
+    removed.forEach(rid => {
+      const relRef = doc(db, 'words', rid);
+      batch.update(relRef, { relatedWords: arrayRemove(id) });
+    });
+  }
+
+  await batch.commit();
+}
+
 export async function deleteItem(collectionName, id) {
+  if (collectionName === 'words') {
+    const itemRef = doc(db, collectionName, id);
+    const snapshot = await getDoc(itemRef);
+    if (snapshot.exists()) {
+      const data = snapshot.data();
+      if (data.relatedWords && data.relatedWords.length > 0) {
+        const batch = writeBatch(db);
+        batch.delete(itemRef);
+        data.relatedWords.forEach(rid => {
+          const relRef = doc(db, 'words', rid);
+          batch.update(relRef, { relatedWords: arrayRemove(id) });
+        });
+        await batch.commit();
+        return;
+      }
+    }
+  }
   const itemRef = doc(db, collectionName, id);
   return await deleteDoc(itemRef);
 }

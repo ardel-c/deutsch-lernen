@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useWords } from '../context/WordContext';
 import { addWord, addPhrase } from '../utils/firestore';
 import { useNavigate } from 'react-router-dom';
 
 export default function AddItem() {
   const { currentUser } = useAuth();
+  const { words } = useWords();
   const navigate = useNavigate();
   const [tab, setTab] = useState('word'); // 'word' | 'phrase'
   const [loading, setLoading] = useState(false);
@@ -17,6 +19,8 @@ export default function AddItem() {
   const [article, setArticle] = useState('');
   const [plural, setPlural] = useState('');
   const [caseRequired, setCaseRequired] = useState('');
+  const [relatedWords, setRelatedWords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [conjugation, setConjugation] = useState({
     ich: '',
     du: '',
@@ -41,7 +45,7 @@ export default function AddItem() {
     
     setLoading(true);
     try {
-      const wordData = { type: wordType, word, english, notes };
+      const wordData = { type: wordType, word, english, notes, relatedWords };
       if (wordType === 'noun') {
         wordData.article = article;
         wordData.plural = plural;
@@ -225,6 +229,33 @@ export default function AddItem() {
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>Notes (Optional)</label>
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)} style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-color)', color: 'var(--text-color)', fontFamily: 'inherit' }} placeholder="Any additional context, examples, or grammar rules..." />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem' }}>Related Words (Optional)</label>
+              <div style={{ border: '1px solid var(--border)', borderRadius: '10px', padding: '0.75rem', background: 'var(--bg-color)' }}>
+                <input 
+                  type="text" 
+                  placeholder="Search existing words..." 
+                  value={searchTerm} 
+                  onChange={e => setSearchTerm(e.target.value)}
+                  style={{ width: '100%', marginBottom: '0.5rem', padding: '0.5rem' }}
+                />
+                <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  {words
+                    .filter(w => (w.word.toLowerCase().includes(searchTerm.toLowerCase()) || w.english.toLowerCase().includes(searchTerm.toLowerCase())) && w.word !== word)
+                    .map(w => (
+                      <label key={w.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-color)' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={relatedWords.includes(w.id)}
+                          onChange={() => setRelatedWords(prev => prev.includes(w.id) ? prev.filter(id => id !== w.id) : [...prev, w.id])}
+                        />
+                        {w.article ? `${w.article} ` : ''}{w.word} - <span style={{ opacity: 0.7 }}>{w.english}</span>
+                      </label>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <button type="submit" disabled={loading} style={{ marginTop: '1rem' }}>
