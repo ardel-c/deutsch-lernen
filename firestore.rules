@@ -1,0 +1,21 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    match /words/{wordId} {
+      // Users can only read and write their own words
+      allow read, write: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      // Allow reading/deleting if it already belongs to the user
+      allow read, delete, update: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    
+    match /phrases/{phraseId} {
+      allow read, write: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow read, delete, update: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+  }
+}
