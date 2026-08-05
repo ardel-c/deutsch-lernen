@@ -3,13 +3,16 @@ import { useAuth } from '../context/AuthContext';
 import { useWords } from '../context/WordContext';
 import { addWord, addPhrase } from '../utils/firestore';
 import { useNavigate } from 'react-router-dom';
+import TagsInput from './TagsInput';
 
 export default function AddItem() {
   const { currentUser } = useAuth();
-  const { words } = useWords();
+  const { words, phrases } = useWords();
   const navigate = useNavigate();
   const [tab, setTab] = useState('word'); // 'word' | 'phrase'
   const [loading, setLoading] = useState(false);
+  const [duplicateError, setDuplicateError] = useState(null);
+  const [tags, setTags] = useState([]);
 
   // Word state
   const [wordType, setWordType] = useState('noun');
@@ -43,9 +46,15 @@ export default function AddItem() {
     e.preventDefault();
     if (!word || !english) return;
     
+    const duplicate = words.find(w => w.word.trim().toLowerCase() === word.trim().toLowerCase());
+    if (duplicate) {
+      setDuplicateError({ type: 'word', item: duplicate });
+      return;
+    }
+
     setLoading(true);
     try {
-      const wordData = { type: wordType, word, english, notes, relatedWords };
+      const wordData = { type: wordType, word, english, notes, relatedWords, tags };
       if (wordType === 'noun') {
         wordData.article = article;
         wordData.plural = plural;
@@ -68,9 +77,15 @@ export default function AddItem() {
     e.preventDefault();
     if (!phrase || !phraseEnglish) return;
     
+    const duplicate = phrases.find(p => p.phrase.trim().toLowerCase() === phrase.trim().toLowerCase());
+    if (duplicate) {
+      setDuplicateError({ type: 'phrase', item: duplicate });
+      return;
+    }
+
     setLoading(true);
     try {
-      await addPhrase(currentUser.uid, { phrase, english: phraseEnglish, notes: phraseNotes });
+      await addPhrase(currentUser.uid, { phrase, english: phraseEnglish, notes: phraseNotes, tags });
       navigate('/', { state: { tab: 'phrases' } });
     } catch (err) {
       console.error(err);
@@ -86,18 +101,34 @@ export default function AddItem() {
         <h2 style={{ marginBottom: '1rem' }}>Add New Item</h2>
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
           <button 
-            onClick={() => setTab('word')} 
+            onClick={() => { setTab('word'); setDuplicateError(null); }} 
             style={{ flex: 1, background: tab === 'word' ? 'var(--primary)' : 'var(--border)', color: tab === 'word' ? '#fff' : 'var(--text-color)' }}
           >
             Word
           </button>
           <button 
-            onClick={() => setTab('phrase')} 
+            onClick={() => { setTab('phrase'); setDuplicateError(null); }} 
             style={{ flex: 1, background: tab === 'phrase' ? 'var(--primary)' : 'var(--border)', color: tab === 'phrase' ? '#fff' : 'var(--text-color)' }}
           >
             Phrase
           </button>
         </div>
+
+        {duplicateError && (
+          <div style={{ padding: '1rem', background: '#fee2e2', color: '#991b1b', borderRadius: '8px', marginBottom: '1.5rem', border: '1px solid #f87171' }}>
+            <h4 style={{ margin: '0 0 0.5rem 0' }}>Wait, this {duplicateError.type} already exists!</h4>
+            <p style={{ margin: '0 0 1rem 0', fontSize: '0.9rem' }}>
+              You already have <strong>{duplicateError.item.word || duplicateError.item.phrase}</strong> in your list.
+            </p>
+            <button 
+              type="button" 
+              onClick={() => navigate(`/edit/${duplicateError.type === 'word' ? 'words' : 'phrases'}/${duplicateError.item.id}`)}
+              style={{ background: '#dc2626', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
+            >
+              Edit Existing Entry
+            </button>
+          </div>
+        )}
 
         {tab === 'word' ? (
           <form onSubmit={handleAddWord} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -171,7 +202,7 @@ export default function AddItem() {
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>German Word *</label>
-              <input required value={word} onChange={(e) => setWord(e.target.value)} style={{ width: '100%' }} placeholder={wordType === 'verb' ? 'e.g. essen' : wordType === 'adjective' ? 'e.g. schön' : wordType === 'adverb' ? 'e.g. schnell' : wordType === 'noun' ? 'e.g. Apfel' : wordType === 'preposition' ? 'e.g. mit' : 'e.g. aber'} />
+              <input required value={word} onChange={(e) => { setWord(e.target.value); setDuplicateError(null); }} style={{ width: '100%' }} placeholder={wordType === 'verb' ? 'e.g. essen' : wordType === 'adjective' ? 'e.g. schön' : wordType === 'adverb' ? 'e.g. schnell' : wordType === 'noun' ? 'e.g. Apfel' : wordType === 'preposition' ? 'e.g. mit' : 'e.g. aber'} />
             </div>
 
             <div>
@@ -231,6 +262,8 @@ export default function AddItem() {
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)} style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-color)', color: 'var(--text-color)', fontFamily: 'inherit' }} placeholder="Any additional context, examples, or grammar rules..." />
             </div>
 
+            <TagsInput tags={tags} setTags={setTags} />
+
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>Related Words (Optional)</label>
               <div style={{ border: '1px solid var(--border)', borderRadius: '10px', padding: '0.75rem', background: 'var(--bg-color)' }}>
@@ -280,7 +313,7 @@ export default function AddItem() {
           <form onSubmit={handleAddPhrase} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>German Phrase *</label>
-              <input required value={phrase} onChange={(e) => setPhrase(e.target.value)} style={{ width: '100%' }} placeholder="e.g. Ich muss aufs Klo" />
+              <input required value={phrase} onChange={(e) => { setPhrase(e.target.value); setDuplicateError(null); }} style={{ width: '100%' }} placeholder="e.g. Ich muss aufs Klo" />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>English Meaning *</label>
@@ -290,6 +323,9 @@ export default function AddItem() {
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>Notes (Optional)</label>
               <textarea value={phraseNotes} onChange={(e) => setPhraseNotes(e.target.value)} style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-color)', color: 'var(--text-color)', fontFamily: 'inherit' }} placeholder="Any additional context, examples, or grammar rules..." />
             </div>
+
+            <TagsInput tags={tags} setTags={setTags} />
+
             <button type="submit" disabled={loading} style={{ marginTop: '1rem' }}>
               {loading ? 'Adding...' : 'Save Phrase'}
             </button>

@@ -5,13 +5,8 @@ export async function addWord(userId, wordData) {
   const wordsRef = collection(db, 'words');
   // Determine if it needs review (e.g. missing article for noun, missing conjugation for verb)
   let needsReview = false;
-  if (wordData.type === 'noun' && (!wordData.article || !wordData.plural)) {
+  if (wordData.type === 'noun' && !wordData.article) {
     needsReview = true;
-  }
-  if (wordData.type === 'verb') {
-    if (!wordData.conjugation || Object.values(wordData.conjugation).some(val => !val.trim())) {
-      needsReview = true;
-    }
   }
   if (wordData.type === 'preposition' && !wordData.caseRequired) {
     needsReview = true;
@@ -179,4 +174,51 @@ export function calculateNextReview(quality, repetitions, previousInterval, prev
     easeFactor,
     nextReviewDate: nextDate.toISOString()
   };
+}
+
+export async function renameGlobalTag(userId, oldTag, newTag, words, phrases) {
+  const batch = writeBatch(db);
+  let hasUpdates = false;
+
+  const updateItems = (items, collectionName) => {
+    items.forEach(item => {
+      if (item.tags && item.tags.includes(oldTag)) {
+        const newTags = item.tags.map(t => t === oldTag ? newTag : t);
+        const uniqueTags = Array.from(new Set(newTags));
+        const itemRef = doc(db, collectionName, item.id);
+        batch.update(itemRef, { tags: uniqueTags });
+        hasUpdates = true;
+      }
+    });
+  };
+
+  updateItems(words, 'words');
+  updateItems(phrases, 'phrases');
+
+  if (hasUpdates) {
+    await batch.commit();
+  }
+}
+
+export async function deleteGlobalTag(userId, tagToDelete, words, phrases) {
+  const batch = writeBatch(db);
+  let hasUpdates = false;
+
+  const updateItems = (items, collectionName) => {
+    items.forEach(item => {
+      if (item.tags && item.tags.includes(tagToDelete)) {
+        const newTags = item.tags.filter(t => t !== tagToDelete);
+        const itemRef = doc(db, collectionName, item.id);
+        batch.update(itemRef, { tags: newTags });
+        hasUpdates = true;
+      }
+    });
+  };
+
+  updateItems(words, 'words');
+  updateItems(phrases, 'phrases');
+
+  if (hasUpdates) {
+    await batch.commit();
+  }
 }

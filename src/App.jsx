@@ -8,6 +8,7 @@ import AddItem from './components/AddItem';
 import EditItem from './components/EditItem';
 import AnkiReview from './components/AnkiReview';
 import GrammarReference from './components/GrammarReference';
+import DataManagement from './components/DataManagement';
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -29,6 +30,7 @@ function AppContent() {
         <Route path="/edit/:collectionName/:id" element={<PrivateRoute><EditItem /></PrivateRoute>} />
         <Route path="/review" element={<PrivateRoute><AnkiReview /></PrivateRoute>} />
         <Route path="/grammar" element={<PrivateRoute><GrammarReference /></PrivateRoute>} />
+        <Route path="/data" element={<PrivateRoute><DataManagement /></PrivateRoute>} />
       </Routes>
     </Router>
   );

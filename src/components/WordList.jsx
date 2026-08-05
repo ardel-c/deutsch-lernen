@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { deleteItem } from '../utils/firestore';
 import { useWords } from '../context/WordContext';
-import { FiTrash2, FiAlertCircle, FiEdit2 } from 'react-icons/fi';
+import { FiTrash2, FiAlertCircle, FiEdit2, FiVolume2, FiX } from 'react-icons/fi';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function WordList() {
@@ -37,12 +37,46 @@ export default function WordList() {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [tab, setTab] = useState(location.state?.tab || 'words'); // 'words' | 'phrases'
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [showMissingInfoOnly, setShowMissingInfoOnly] = useState(location.state?.fromMissingInfo || false);
+  
+  const allTags = Array.from(new Set([
+    ...words.flatMap(w => w.tags || []),
+    ...phrases.flatMap(p => p.tags || [])
+  ])).sort();
+
+  const toggleTag = (tag) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const speakGerman = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    window.speechSynthesis.speak(utterance);
+  };
   
   useEffect(() => {
     if (location.state?.tab) {
       setTab(location.state.tab);
     }
-  }, [location.state?.tab]);
+    if (location.state?.fromMissingInfo !== undefined) {
+      setShowMissingInfoOnly(location.state.fromMissingInfo);
+    }
+    
+    if (location.state?.editedId && !loading) {
+      setTimeout(() => {
+        const el = document.getElementById(`item-${location.state.editedId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'auto', block: 'center' });
+          el.style.transition = 'background-color 1.5s ease';
+          el.style.backgroundColor = 'rgba(79, 70, 229, 0.2)';
+          setTimeout(() => { el.style.backgroundColor = ''; }, 2000);
+        }
+      }, 150);
+    }
+  }, [location.state?.tab, location.state?.fromMissingInfo, location.state?.editedId, loading]);
   const [collapsedSections, setCollapsedSections] = useState({
     Nouns: false,
     Verbs: false,
@@ -85,15 +119,29 @@ export default function WordList() {
 
   const totalPending = pendingWords + pendingPhrases;
 
-  const filteredWords = words.filter(w => 
-    w.word.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    w.english.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredWords = words.filter(w => {
+    const matchesSearch = w.word.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          w.english.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => (w.tags || []).includes(tag));
+    const matchesMissingInfo = showMissingInfoOnly ? w.needsReview : true;
+    return matchesSearch && matchesTags && matchesMissingInfo;
+  });
 
-  const filteredPhrases = phrases.filter(p => 
-    p.phrase.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    p.english.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPhrases = phrases.filter(p => {
+    const matchesSearch = p.phrase.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          p.english.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => (p.tags || []).includes(tag));
+    const matchesMissingInfo = showMissingInfoOnly ? p.needsReview : true;
+    return matchesSearch && matchesTags && matchesMissingInfo;
+  });
+
+  const hasActiveFilters = searchQuery !== '' || selectedTags.length > 0 || showMissingInfoOnly;
+  
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedTags([]);
+    setShowMissingInfoOnly(false);
+  };
 
   const nouns = filteredWords.filter(w => w.type === 'noun');
   const verbs = filteredWords.filter(w => w.type === 'verb');
@@ -126,12 +174,19 @@ export default function WordList() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', paddingTop: '1rem' }}>
                 {items.map(w => (
-                  <div key={w.id} className="card word-card-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={w.id} id={`item-${w.id}`} className="card word-card-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <strong style={{ color: w.article ? getArticleColor(w.article) : 'inherit' }}>
+                        <strong style={{ color: w.article ? getArticleColor(w.article) : 'inherit', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                           {w.article && <span>{w.article} </span>}
                           {w.word}
+                          <button 
+                            onClick={() => speakGerman(w.article ? `${w.article} ${w.word}` : w.word)} 
+                            style={{ background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: '0.1rem', display: 'flex', alignItems: 'center' }}
+                            title="Listen"
+                          >
+                            <FiVolume2 size={16} />
+                          </button>
                         </strong> 
                         <span style={{ fontSize: '0.9rem', color: 'var(--primary)' }}>({w.type})</span>
                         {w.needsReview && (
@@ -175,6 +230,15 @@ export default function WordList() {
                           })}
                         </div>
                       )}
+                      {w.tags && w.tags.length > 0 && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.5rem' }}>
+                          {w.tags.map(tag => (
+                            <span key={tag} style={{ background: 'var(--border)', padding: '0.1rem 0.4rem', borderRadius: '12px', fontSize: '0.75rem', opacity: 0.8 }}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       <div style={{ marginTop: '0.5rem' }}>
                         <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem', borderRadius: '12px', background: getReviewStatus(w).bg, color: getReviewStatus(w).color, fontWeight: '600' }}>
                           {getReviewStatus(w).text}
@@ -182,7 +246,7 @@ export default function WordList() {
                       </div>
                     </div>
                     <div className="word-card-actions" style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button onClick={() => navigate(`/edit/words/${w.id}`)} style={{ background: 'transparent', color: 'var(--primary)', padding: '0.5rem' }} aria-label="Edit word">
+                      <button onClick={() => navigate(`/edit/words/${w.id}`, { state: { fromMissingInfo: showMissingInfoOnly } })} style={{ background: 'transparent', color: 'var(--primary)', padding: '0.5rem' }} aria-label="Edit word">
                         <FiEdit2 size={20} />
                       </button>
                       <button onClick={() => handleDelete('words', w.id)} style={{ background: 'transparent', color: 'var(--danger)', padding: '0.5rem' }} aria-label="Delete word">
@@ -206,43 +270,91 @@ export default function WordList() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <div className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div onClick={() => setTab('words')} className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: tab === 'words' ? '2px solid var(--primary)' : '1px solid var(--border)' }} onMouseOver={e => tab !== 'words' && (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)' }}>{words.length}</div>
-          <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>Words</div>
+          <div style={{ fontSize: '0.9rem', opacity: 0.8, fontWeight: tab === 'words' ? 'bold' : 'normal' }}>Words</div>
         </div>
-        <div className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div onClick={() => setTab('phrases')} className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: tab === 'phrases' ? '2px solid var(--success)' : '1px solid var(--border)' }} onMouseOver={e => tab !== 'phrases' && (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--success)' }}>{phrases.length}</div>
-          <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>Phrases</div>
+          <div style={{ fontSize: '0.9rem', opacity: 0.8, fontWeight: tab === 'phrases' ? 'bold' : 'normal' }}>Phrases</div>
         </div>
-        <div className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', border: totalPending > 0 ? '1px solid var(--warning)' : '1px solid var(--border)' }}>
+        <div onClick={() => navigate('/review')} className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', border: totalPending > 0 ? '2px solid var(--warning)' : '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: totalPending > 0 ? 'var(--warning)' : 'var(--text-color)' }}>{totalPending}</div>
           <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>Pending Reviews</div>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-        <button 
-          onClick={() => setTab('words')} 
-          style={{ flex: 1, background: tab === 'words' ? 'var(--primary)' : 'var(--border)', color: tab === 'words' ? '#fff' : 'var(--text-color)' }}
-        >
-          Words ({words.length})
-        </button>
-        <button 
-          onClick={() => setTab('phrases')} 
-          style={{ flex: 1, background: tab === 'phrases' ? 'var(--primary)' : 'var(--border)', color: tab === 'phrases' ? '#fff' : 'var(--text-color)' }}
-        >
-          Phrases ({phrases.length})
-        </button>
-      </div>
-
       <div style={{ marginBottom: '2rem' }}>
-        <input 
-          type="text" 
-          placeholder={`Search ${tab === 'words' ? 'words' : 'phrases'}...`} 
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{ width: '100%' }}
-        />
+        {allTags.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+            {allTags.map(tag => (
+              <button
+                key={tag}
+                onClick={() => toggleTag(tag)}
+                style={{
+                  background: selectedTags.includes(tag) ? 'var(--primary)' : 'var(--card-bg)',
+                  color: selectedTags.includes(tag) ? '#fff' : 'var(--text-color)',
+                  border: `1px solid ${selectedTags.includes(tag) ? 'var(--primary)' : 'var(--border)'}`,
+                  borderRadius: '16px',
+                  padding: '0.3rem 0.8rem',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer'
+                }}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <input 
+            type="text" 
+            placeholder={`Search ${tab === 'words' ? 'words' : 'phrases'}...`} 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text-color)' }}
+          />
+          <button 
+             onClick={() => setShowMissingInfoOnly(!showMissingInfoOnly)}
+             style={{ 
+               padding: '0 1rem', 
+               borderRadius: '8px', 
+               border: `1px solid ${showMissingInfoOnly ? 'var(--warning)' : 'var(--border)'}`, 
+               background: showMissingInfoOnly ? 'var(--warning)' : 'var(--card-bg)', 
+               color: showMissingInfoOnly ? '#fff' : 'var(--text-color)',
+               cursor: 'pointer',
+               display: 'flex',
+               alignItems: 'center',
+               gap: '0.5rem',
+               whiteSpace: 'nowrap'
+             }}
+             title="Filter items that have missing articles or conjugations"
+          >
+            <FiAlertCircle />
+            {showMissingInfoOnly ? 'Missing Info' : 'Check Missing Info'}
+          </button>
+          {hasActiveFilters && (
+            <button 
+               onClick={clearFilters}
+               style={{ 
+                 padding: '0 1rem', 
+                 borderRadius: '8px', 
+                 border: '1px solid var(--danger)', 
+                 background: 'transparent', 
+                 color: 'var(--danger)',
+                 cursor: 'pointer',
+                 display: 'flex',
+                 alignItems: 'center',
+                 gap: '0.5rem',
+                 whiteSpace: 'nowrap'
+               }}
+               title="Clear all active filters"
+            >
+              <FiX />
+              Clear Filters
+            </button>
+          )}
+        </div>
       </div>
 
       {tab === 'words' ? (
@@ -261,13 +373,31 @@ export default function WordList() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {filteredPhrases.map(p => (
-                <div key={p.id} className="card word-card-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div key={p.id} id={`item-${p.id}`} className="card word-card-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <strong>{p.phrase}</strong>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      {p.phrase}
+                      <button 
+                        onClick={() => speakGerman(p.phrase)} 
+                        style={{ background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', padding: '0.1rem', display: 'flex', alignItems: 'center' }}
+                        title="Listen"
+                      >
+                        <FiVolume2 size={16} />
+                      </button>
+                    </strong>
                     <div style={{ color: 'var(--text-color)', opacity: 0.8 }}>{p.english}</div>
                     {p.notes && (
                       <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: 'var(--bg-color)', borderRadius: '6px', borderLeft: '2px solid var(--primary)' }}>
                         {p.notes}
+                      </div>
+                    )}
+                    {p.tags && p.tags.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.5rem' }}>
+                        {p.tags.map(tag => (
+                          <span key={tag} style={{ background: 'var(--border)', padding: '0.1rem 0.4rem', borderRadius: '12px', fontSize: '0.75rem', opacity: 0.8 }}>
+                            {tag}
+                          </span>
+                        ))}
                       </div>
                     )}
                     <div style={{ marginTop: '0.5rem' }}>
@@ -277,7 +407,7 @@ export default function WordList() {
                     </div>
                   </div>
                   <div className="word-card-actions" style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => navigate(`/edit/phrases/${p.id}`)} style={{ background: 'transparent', color: 'var(--primary)', padding: '0.5rem' }} aria-label="Edit phrase">
+                    <button onClick={() => navigate(`/edit/phrases/${p.id}`, { state: { fromMissingInfo: showMissingInfoOnly } })} style={{ background: 'transparent', color: 'var(--primary)', padding: '0.5rem' }} aria-label="Edit phrase">
                       <FiEdit2 size={20} />
                     </button>
                     <button onClick={() => handleDelete('phrases', p.id)} style={{ background: 'transparent', color: 'var(--danger)', padding: '0.5rem' }} aria-label="Delete phrase">
