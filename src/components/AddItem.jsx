@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWords } from '../context/WordContext';
 import { addWord, addPhrase } from '../utils/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import TagsInput from './TagsInput';
 
 export default function AddItem() {
   const { currentUser } = useAuth();
   const { words, phrases } = useWords();
   const navigate = useNavigate();
-  const [tab, setTab] = useState('word'); // 'word' | 'phrase'
+  const location = useLocation();
+  const [tab, setTab] = useState(location.state?.tab || 'word'); // 'word' | 'phrase'
   const [loading, setLoading] = useState(false);
   const [duplicateError, setDuplicateError] = useState(null);
   const [tags, setTags] = useState([]);

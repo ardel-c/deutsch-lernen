@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { deleteItem } from '../utils/firestore';
 import { useWords } from '../context/WordContext';
-import { FiTrash2, FiAlertCircle, FiEdit2, FiVolume2, FiX } from 'react-icons/fi';
+import { FiTrash2, FiAlertCircle, FiEdit2, FiVolume2, FiX, FiPlus } from 'react-icons/fi';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function WordList() {
@@ -270,12 +270,30 @@ export default function WordList() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <div onClick={() => setTab('words')} className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: tab === 'words' ? '2px solid var(--primary)' : '1px solid var(--border)' }} onMouseOver={e => tab !== 'words' && (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)' }}>{words.length}</div>
+        <div onClick={() => setTab('words')} className="card" style={{ position: 'relative', padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: tab === 'words' ? '2px solid var(--primary)' : '1px solid var(--border)' }} onMouseOver={e => tab !== 'words' && (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+          <button 
+            onClick={(e) => { e.stopPropagation(); navigate('/add', { state: { tab: 'word' } }); }} 
+            style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '12px', padding: '0.2rem 0.6rem', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.2rem', cursor: 'pointer', boxShadow: '0 2px 4px rgba(79, 70, 229, 0.2)' }}
+            title="Add Word"
+            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <FiPlus size={12} /> Add
+          </button>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)', marginTop: '0.5rem' }}>{words.length}</div>
           <div style={{ fontSize: '0.9rem', opacity: 0.8, fontWeight: tab === 'words' ? 'bold' : 'normal' }}>Words</div>
         </div>
-        <div onClick={() => setTab('phrases')} className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: tab === 'phrases' ? '2px solid var(--success)' : '1px solid var(--border)' }} onMouseOver={e => tab !== 'phrases' && (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--success)' }}>{phrases.length}</div>
+        <div onClick={() => setTab('phrases')} className="card" style={{ position: 'relative', padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', border: tab === 'phrases' ? '2px solid var(--success)' : '1px solid var(--border)' }} onMouseOver={e => tab !== 'phrases' && (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+          <button 
+            onClick={(e) => { e.stopPropagation(); navigate('/add', { state: { tab: 'phrase' } }); }} 
+            style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'var(--success)', color: '#fff', border: 'none', borderRadius: '12px', padding: '0.2rem 0.6rem', fontSize: '0.75rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.2rem', cursor: 'pointer', boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)' }}
+            title="Add Phrase"
+            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <FiPlus size={12} /> Add
+          </button>
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--success)', marginTop: '0.5rem' }}>{phrases.length}</div>
           <div style={{ fontSize: '0.9rem', opacity: 0.8, fontWeight: tab === 'phrases' ? 'bold' : 'normal' }}>Phrases</div>
         </div>
         <div onClick={() => navigate('/review')} className="card" style={{ padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', border: totalPending > 0 ? '2px solid var(--warning)' : '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
