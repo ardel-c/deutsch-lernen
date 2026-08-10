@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { updateItem, calculateNextReview } from '../utils/firestore';
 import { useWords } from '../context/WordContext';
 import { FiVolume2 } from 'react-icons/fi';
+import FormattedText from './FormattedText';
 
 export default function AnkiReview() {
   const { currentUser } = useAuth();
@@ -217,9 +218,11 @@ export default function AnkiReview() {
               </p>
             )}
             {currentItem.notes && (
-              <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--bg-color)', borderRadius: '10px', borderLeft: '3px solid var(--primary)', textAlign: 'left', fontSize: '0.9rem' }}>
-                <strong style={{ display: 'block', marginBottom: '0.25rem', opacity: 0.8 }}>Notes:</strong>
-                {currentItem.notes}
+              <div style={{ padding: '1rem', background: 'var(--bg-color)', borderRadius: '10px', fontSize: '0.95rem', borderLeft: '4px solid var(--primary)', textAlign: 'left' }}>
+                <strong>Notes:</strong>
+                <div style={{ marginTop: '0.5rem' }}>
+                  <FormattedText text={currentItem.notes} />
+                </div>
               </div>
             )}
             

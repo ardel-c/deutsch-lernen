@@ -4,6 +4,7 @@ import { deleteItem } from '../utils/firestore';
 import { useWords } from '../context/WordContext';
 import { FiTrash2, FiAlertCircle, FiEdit2, FiVolume2, FiX, FiPlus } from 'react-icons/fi';
 import { useNavigate, useLocation } from 'react-router-dom';
+import FormattedText from './FormattedText';
 
 export default function WordList() {
   const { currentUser } = useAuth();
@@ -212,7 +213,7 @@ export default function WordList() {
                       )}
                       {w.notes && (
                         <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: 'var(--bg-color)', borderRadius: '6px', borderLeft: '2px solid var(--primary)' }}>
-                          {w.notes}
+                          <FormattedText text={w.notes} />
                         </div>
                       )}
                       {w.relatedWords && w.relatedWords.length > 0 && (
@@ -406,7 +407,7 @@ export default function WordList() {
                     <div style={{ color: 'var(--text-color)', opacity: 0.8 }}>{p.english}</div>
                     {p.notes && (
                       <div style={{ fontSize: '0.85rem', marginTop: '0.5rem', padding: '0.5rem', background: 'var(--bg-color)', borderRadius: '6px', borderLeft: '2px solid var(--primary)' }}>
-                        {p.notes}
+                        <FormattedText text={p.notes} />
                       </div>
                     )}
                     {p.tags && p.tags.length > 0 && (
