@@ -8,11 +8,12 @@ export default function FormattedText({ text }) {
 
   if (isHtml) {
     return (
-      <div className="formatted-html" dangerouslySetInnerHTML={{ __html: text }}>
+      <div className="formatted-html">
         <style>{`
           .formatted-html p { margin: 0; }
           .formatted-html p:not(:last-child) { margin-bottom: 0.5rem; }
         `}</style>
+        <div dangerouslySetInnerHTML={{ __html: text }} />
       </div>
     );
   }
