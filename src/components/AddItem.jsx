@@ -4,6 +4,8 @@ import { useWords } from '../context/WordContext';
 import { addWord, addPhrase } from '../utils/firestore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import TagsInput from './TagsInput';
+import RichTextEditor from './RichTextEditor';
+import { FiX } from 'react-icons/fi';
 
 export default function AddItem() {
   const { currentUser } = useAuth();
@@ -96,10 +98,62 @@ export default function AddItem() {
     }
   };
 
+  const checkIsDirty = () => {
+    if (tab === 'word') {
+      return word !== '' ||
+             english !== '' ||
+             notes !== '' ||
+             article !== '' ||
+             plural !== '' ||
+             caseRequired !== '' ||
+             relatedWords.length > 0 ||
+             tags.length > 0 ||
+             Object.values(conjugation).some(v => v !== '');
+    } else {
+      return phrase !== '' ||
+             phraseEnglish !== '' ||
+             phraseNotes !== '' ||
+             tags.length > 0;
+    }
+  };
+
+  const handleClose = async () => {
+    if (checkIsDirty()) {
+      const save = window.confirm("You have unsaved changes. Do you want to save them before leaving?\n\n(Click OK to save, Cancel to discard and leave)");
+      if (save) {
+        if (tab === 'word') {
+          if (!word || !english) {
+            alert('Please fill out the required German Word and English Meaning fields before saving.');
+            return;
+          }
+          await handleAddWord({ preventDefault: () => {} });
+        } else {
+          if (!phrase || !phraseEnglish) {
+            alert('Please fill out the required German Phrase and English Meaning fields before saving.');
+            return;
+          }
+          await handleAddPhrase({ preventDefault: () => {} });
+        }
+        return;
+      }
+    }
+    navigate('/', { state: { tab: tab === 'phrase' ? 'phrases' : 'words' } });
+  };
+
   return (
     <div className="container">
-      <div className="card">
-        <h2 style={{ marginBottom: '1rem' }}>Add New Item</h2>
+      <div className="card" style={{ position: 'relative' }}>
+        <button 
+          type="button"
+          onClick={handleClose} 
+          style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: '2px solid var(--danger)', borderRadius: '8px', color: 'var(--danger)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.8, transition: 'all 0.2s' }}
+          title="Close"
+          onMouseOver={e => { e.currentTarget.style.opacity = 1; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+          onMouseOut={e => { e.currentTarget.style.opacity = 0.8; e.currentTarget.style.background = 'transparent'; }}
+        >
+          <FiX size={20} />
+        </button>
+        <h2 style={{ marginBottom: '1rem', paddingRight: '2.5rem' }}>Add New Item</h2>
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
           <button 
             onClick={() => { setTab('word'); setDuplicateError(null); }} 
@@ -260,7 +314,7 @@ export default function AddItem() {
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>Notes (Optional)</label>
-              <textarea value={notes} onChange={(e) => setNotes(e.target.value)} style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-color)', color: 'var(--text-color)', fontFamily: 'inherit' }} placeholder="Any additional context, examples, or grammar rules..." />
+              <RichTextEditor value={notes} onChange={setNotes} placeholder="Any additional context, examples, or grammar rules..." />
             </div>
 
             <TagsInput tags={tags} setTags={setTags} />
@@ -322,7 +376,7 @@ export default function AddItem() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>Notes (Optional)</label>
-              <textarea value={phraseNotes} onChange={(e) => setPhraseNotes(e.target.value)} style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-color)', color: 'var(--text-color)', fontFamily: 'inherit' }} placeholder="Any additional context, examples, or grammar rules..." />
+              <RichTextEditor value={phraseNotes} onChange={setPhraseNotes} placeholder="Any additional context, examples, or grammar rules..." />
             </div>
 
             <TagsInput tags={tags} setTags={setTags} />

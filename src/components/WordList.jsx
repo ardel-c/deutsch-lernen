@@ -67,17 +67,20 @@ export default function WordList() {
     }
     
     if (location.state?.editedId && !loading) {
-      setTimeout(() => {
+      // Use requestAnimationFrame to scroll immediately after render without a delay
+      requestAnimationFrame(() => {
         const el = document.getElementById(`item-${location.state.editedId}`);
         if (el) {
           el.scrollIntoView({ behavior: 'auto', block: 'center' });
-          el.style.transition = 'background-color 1.5s ease';
-          el.style.backgroundColor = 'rgba(79, 70, 229, 0.2)';
-          setTimeout(() => { el.style.backgroundColor = ''; }, 2000);
+          if (location.state?.saved) {
+            el.style.transition = 'background-color 1.5s ease';
+            el.style.backgroundColor = 'rgba(79, 70, 229, 0.2)';
+            setTimeout(() => { el.style.backgroundColor = ''; }, 2000);
+          }
         }
-      }, 150);
+      });
     }
-  }, [location.state?.tab, location.state?.fromMissingInfo, location.state?.editedId, loading]);
+  }, [location.state?.tab, location.state?.fromMissingInfo, location.state?.editedId, location.state?.saved, loading]);
   const [collapsedSections, setCollapsedSections] = useState({
     Nouns: false,
     Verbs: false,

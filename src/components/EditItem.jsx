@@ -4,6 +4,8 @@ import { useWords } from '../context/WordContext';
 import { getItem, updateItem, updateWord } from '../utils/firestore';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import TagsInput from './TagsInput';
+import { FiX } from 'react-icons/fi';
+import RichTextEditor from './RichTextEditor';
 
 export default function EditItem() {
   const { currentUser } = useAuth();
@@ -13,6 +15,7 @@ export default function EditItem() {
   const { collectionName, id } = useParams();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [initialData, setInitialData] = useState(null);
 
   // Word state
   const [wordType, setWordType] = useState('noun');
@@ -74,6 +77,28 @@ export default function EditItem() {
             setNotes(item.notes || '');
             setTags(item.tags || []);
           }
+
+          if (collectionName === 'words') {
+            setInitialData({
+              wordType: item.type || 'noun',
+              word: item.word || '',
+              english: item.english || '',
+              notes: item.notes || '',
+              article: item.article || '',
+              plural: item.plural || '',
+              caseRequired: item.caseRequired || '',
+              relatedWords: item.relatedWords || [],
+              tags: item.tags || [],
+              conjugation: typeof item.conjugation === 'object' ? item.conjugation : (item.conjugation ? { ich: item.conjugation, du: '', erSieEs: '', wir: '', ihr: '', sieSie: '' } : { ich: '', du: '', erSieEs: '', wir: '', ihr: '', sieSie: '' })
+            });
+          } else {
+            setInitialData({
+              phrase: item.phrase || '',
+              english: item.english || '',
+              notes: item.notes || '',
+              tags: item.tags || []
+            });
+          }
         }
       } catch (err) {
         console.error("Failed to load item", err);
@@ -86,6 +111,38 @@ export default function EditItem() {
 
   const handleConjugationChange = (field, value) => {
     setConjugation(prev => ({ ...prev, [field]: value }));
+  };
+
+  const checkIsDirty = () => {
+    if (!initialData) return false;
+    if (collectionName === 'words') {
+      return wordType !== initialData.wordType ||
+             word !== initialData.word ||
+             english !== initialData.english ||
+             notes !== initialData.notes ||
+             article !== initialData.article ||
+             plural !== initialData.plural ||
+             caseRequired !== initialData.caseRequired ||
+             JSON.stringify(relatedWords) !== JSON.stringify(initialData.relatedWords) ||
+             JSON.stringify(tags) !== JSON.stringify(initialData.tags) ||
+             JSON.stringify(conjugation) !== JSON.stringify(initialData.conjugation);
+    } else {
+      return phrase !== initialData.phrase ||
+             english !== initialData.english ||
+             notes !== initialData.notes ||
+             JSON.stringify(tags) !== JSON.stringify(initialData.tags);
+    }
+  };
+
+  const handleClose = () => {
+    if (checkIsDirty()) {
+      const save = window.confirm("You have unsaved changes. Do you want to save them before leaving?\n\n(Click OK to save, Cancel to discard and leave)");
+      if (save) {
+        handleSave({ preventDefault: () => {} });
+        return;
+      }
+    }
+    navigate('/', { state: { tab: collectionName === 'phrases' ? 'phrases' : 'words', editedId: id, fromMissingInfo: location.state?.fromMissingInfo } });
   };
 
   const handleSave = async (e) => {
@@ -118,7 +175,7 @@ export default function EditItem() {
       } else {
         await updateItem('phrases', id, { phrase, english, notes, tags });
       }
-      navigate('/', { state: { tab: collectionName === 'phrases' ? 'phrases' : 'words', fromMissingInfo: location.state?.fromMissingInfo, editedId: id } });
+      navigate('/', { state: { tab: collectionName === 'phrases' ? 'phrases' : 'words', fromMissingInfo: location.state?.fromMissingInfo, editedId: id, saved: true } });
     } catch (err) {
       console.error(err);
       alert('Failed to save changes');
@@ -131,8 +188,18 @@ export default function EditItem() {
 
   return (
     <div className="container">
-      <div className="card">
-        <h2 style={{ marginBottom: '1.5rem' }}>Edit {collectionName === 'words' ? 'Word' : 'Phrase'}</h2>
+      <div className="card" style={{ position: 'relative' }}>
+        <button 
+          type="button"
+          onClick={handleClose} 
+          style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: '2px solid var(--danger)', borderRadius: '8px', color: 'var(--danger)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.8, transition: 'all 0.2s' }}
+          title="Close"
+          onMouseOver={e => { e.currentTarget.style.opacity = 1; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+          onMouseOut={e => { e.currentTarget.style.opacity = 0.8; e.currentTarget.style.background = 'transparent'; }}
+        >
+          <FiX size={20} />
+        </button>
+        <h2 style={{ marginBottom: '1.5rem', paddingRight: '2.5rem' }}>Edit {collectionName === 'words' ? 'Word' : 'Phrase'}</h2>
         
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {collectionName === 'words' ? (
@@ -264,7 +331,7 @@ export default function EditItem() {
               
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Notes (Optional)</label>
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-color)', color: 'var(--text-color)', fontFamily: 'inherit' }} />
+                <RichTextEditor value={notes} onChange={setNotes} placeholder="Any additional context, examples, or grammar rules..." />
               </div>
 
               <TagsInput tags={tags} setTags={setTags} />
@@ -322,7 +389,7 @@ export default function EditItem() {
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>Notes (Optional)</label>
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} style={{ width: '100%', minHeight: '80px', padding: '0.75rem', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--bg-color)', color: 'var(--text-color)', fontFamily: 'inherit' }} />
+                <RichTextEditor value={notes} onChange={setNotes} placeholder="Any additional context, examples, or grammar rules..." />
               </div>
               
               <TagsInput tags={tags} setTags={setTags} />
@@ -330,7 +397,7 @@ export default function EditItem() {
           )}
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <button type="button" onClick={() => navigate('/', { state: { tab: collectionName === 'phrases' ? 'phrases' : 'words' } })} style={{ flex: 1, background: 'var(--border)', color: 'var(--text-color)' }}>
+            <button type="button" onClick={handleClose} style={{ flex: 1, background: 'var(--border)', color: 'var(--text-color)' }}>
               Cancel
             </button>
             <button type="submit" disabled={saving} style={{ flex: 1 }}>

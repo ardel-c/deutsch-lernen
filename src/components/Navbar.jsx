@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
-import { FiHome, FiPlusCircle, FiBookOpen, FiBookmark, FiDatabase, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiPlusCircle, FiBookOpen, FiBookmark, FiDatabase, FiLogOut, FiEdit3 } from 'react-icons/fi';
 
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
@@ -31,6 +31,9 @@ export default function Navbar() {
             </Link>
             <Link to="/grammar" title="Grammar Reference" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
               <FiBookmark size={24} />
+            </Link>
+            <Link to="/practice" title="Article Practice" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
+              <FiEdit3 size={24} />
             </Link>
             <Link to="/data" title="Data Management" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
               <FiDatabase size={24} />

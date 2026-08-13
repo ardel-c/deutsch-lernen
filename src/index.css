@@ -64,6 +64,67 @@ button:active {
   transform: translateY(0);
 }
 
+.grammar-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.grammar-nav {
+  position: static;
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.grammar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.grammar-nav a {
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  display: block;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.grammar-nav a:hover {
+  background-color: var(--border);
+  color: var(--primary);
+}
+
+@media (min-width: 900px) {
+  .container.grammar-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    max-width: 100%;
+    padding: 2rem 4rem;
+  }
+  
+  .grammar-nav {
+    position: sticky;
+    top: 100px;
+    width: 280px;
+    flex-shrink: 0;
+  }
+  
+  .grammar-content {
+    flex-grow: 1;
+    min-width: 0;
+    max-width: 900px;
+  }
+}
+
 input, select {
   font-family: inherit;
   padding: 0.5rem;
@@ -87,6 +148,7 @@ input:focus, select:focus {
   padding: 1.5rem;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
+  scroll-margin-top: 100px;
 }
 
 .glass-nav {
