@@ -274,7 +274,7 @@ export default function EditItem() {
 
               <div>
                 <label style={{ display: 'block', marginBottom: '0.5rem' }}>German Word *</label>
-                <input required value={word} onChange={(e) => setWord(e.target.value)} style={{ width: '100%' }} placeholder={wordType === 'verb' ? 'e.g. essen' : wordType === 'adjective' ? 'e.g. schön' : wordType === 'adverb' ? 'e.g. schnell' : wordType === 'noun' ? 'e.g. Apfel' : wordType === 'preposition' ? 'e.g. mit' : 'e.g. aber'} />
+                <input required value={word} onChange={(e) => setWord(e.target.value)} style={{ width: '100%', textTransform: wordType === 'noun' ? 'capitalize' : 'none' }} placeholder={wordType === 'verb' ? 'e.g. essen' : wordType === 'adjective' ? 'e.g. schön' : wordType === 'adverb' ? 'e.g. schnell' : wordType === 'noun' ? 'e.g. Apfel' : wordType === 'preposition' ? 'e.g. mit' : 'e.g. aber'} />
               </div>
 
               <div>
@@ -285,7 +285,7 @@ export default function EditItem() {
               {wordType === 'noun' && (
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem' }}>Plural Form (Optional)</label>
-                  <input value={plural} onChange={(e) => setPlural(e.target.value)} style={{ width: '100%' }} />
+                  <input value={plural} onChange={(e) => setPlural(e.target.value)} style={{ width: '100%', textTransform: wordType === 'noun' ? 'capitalize' : 'none' }} />
                 </div>
               )}
 
