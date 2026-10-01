@@ -1,6 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { articlePracticeData } from '../data/articlePracticeData';
 import { FiCheckCircle, FiXCircle, FiRefreshCw } from 'react-icons/fi';
+
+const definiteArticles = new Set(['der', 'die', 'das', 'den', 'dem']);
+const indefiniteArticles = new Set(['ein', 'eine', 'einen', 'einem', 'einer']);
+
+function getArticleType(answer) {
+  const types = answer
+    .split('/')
+    .map(article => article.trim().toLowerCase())
+    .map(article => {
+      if (definiteArticles.has(article)) return 'the';
+      if (indefiniteArticles.has(article)) return 'a';
+      return null;
+    })
+    .filter(Boolean);
+
+  return [...new Set(types)].join(' or ');
+}
 
 export default function ArticlePractice() {
   const [questions, setQuestions] = useState([]);
@@ -78,6 +95,9 @@ export default function ArticlePractice() {
 
           return (
             <div key={q.id} className="card" style={{ position: 'relative' }}>
+              <div style={{ marginBottom: '0.75rem', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: '600' }}>
+                Use: <span style={{ fontStyle: 'italic' }}>{getArticleType(q.answer)}</span>
+              </div>
               <div style={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem', flexWrap: 'wrap', gap: '0.5rem', lineHeight: '2' }}>
                 <span style={{ fontWeight: 'bold', color: 'var(--primary)', marginRight: '0.5rem' }}>{index + 1}.</span>
                 {q.prefix && <span>{q.prefix}</span>}
@@ -107,7 +127,7 @@ export default function ArticlePractice() {
               {submitted && !isCorrect && (
                 <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
                   <p style={{ color: 'var(--danger)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Correct answer: <span style={{ textDecoration: 'underline' }}>{q.answer.split('/').join(' or ')}</span>
+                    Correct answer ({getArticleType(q.answer)}): <span style={{ textDecoration: 'underline' }}>{q.answer.split('/').join(' or ')}</span>
                   </p>
                   <p style={{ fontSize: '0.9rem', lineHeight: '1.5', opacity: 0.9 }}>
                     <strong>Explanation:</strong> {q.explanation}

@@ -10,6 +10,7 @@ export default function GrammarReference() {
           <li><a href="#cases">The Four German Cases</a></li>
           <li><a href="#definite-articles">Definite Articles (the)</a></li>
           <li><a href="#indefinite-articles">Indefinite Articles (a/an)</a></li>
+          <li><a href="#pronouns">Pronoun Cases</a></li>
           <li><a href="#prepositions">Two-Way Prepositions</a></li>
           <li><a href="#adjectives">Adjective Endings</a></li>
           <li><a href="#perfekt">The Perfect Tense (Perfekt)</a></li>
@@ -132,6 +133,120 @@ export default function GrammarReference() {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div id="pronouns" className="card" style={{ marginBottom: '2rem', overflowX: 'auto' }}>
+        <h3 style={{ marginBottom: '1rem', color: 'var(--primary)' }}>Pronoun Cases</h3>
+        <p style={{ marginBottom: '1rem', lineHeight: '1.6' }}>
+          Pronouns change depending on their role in the sentence. Personal pronouns refer to people or things; possessive pronouns show ownership.
+        </p>
+
+        <h4 style={{ marginBottom: '0.5rem' }}>Personal Pronouns</h4>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '650px', marginBottom: '1.5rem' }}>
+          <thead>
+            <tr style={{ borderBottom: '2px solid var(--border)' }}>
+              <th style={{ padding: '0.5rem' }}>Case</th>
+              <th style={{ padding: '0.5rem' }}>I</th>
+              <th style={{ padding: '0.5rem' }}>you (sing.)</th>
+              <th style={{ padding: '0.5rem' }}>he</th>
+              <th style={{ padding: '0.5rem' }}>she</th>
+              <th style={{ padding: '0.5rem' }}>we</th>
+              <th style={{ padding: '0.5rem' }}>you (pl.)</th>
+              <th style={{ padding: '0.5rem' }}>they / formal you</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Nominative</td>
+              <td style={{ padding: '0.5rem' }}>ich</td>
+              <td style={{ padding: '0.5rem' }}>du</td>
+              <td style={{ padding: '0.5rem' }}>er</td>
+              <td style={{ padding: '0.5rem' }}>sie</td>
+              <td style={{ padding: '0.5rem' }}>wir</td>
+              <td style={{ padding: '0.5rem' }}>ihr</td>
+              <td style={{ padding: '0.5rem' }}>sie / Sie</td>
+            </tr>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Accusative</td>
+              <td style={{ padding: '0.5rem' }}>mich</td>
+              <td style={{ padding: '0.5rem' }}>dich</td>
+              <td style={{ padding: '0.5rem' }}>ihn</td>
+              <td style={{ padding: '0.5rem' }}>sie</td>
+              <td style={{ padding: '0.5rem' }}>uns</td>
+              <td style={{ padding: '0.5rem' }}>euch</td>
+              <td style={{ padding: '0.5rem' }}>sie / Sie</td>
+            </tr>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Dative</td>
+              <td style={{ padding: '0.5rem' }}>mir</td>
+              <td style={{ padding: '0.5rem' }}>dir</td>
+              <td style={{ padding: '0.5rem' }}>ihm</td>
+              <td style={{ padding: '0.5rem' }}>ihr</td>
+              <td style={{ padding: '0.5rem' }}>uns</td>
+              <td style={{ padding: '0.5rem' }}>euch</td>
+              <td style={{ padding: '0.5rem' }}>ihnen / Ihnen</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Genitive</td>
+              <td style={{ padding: '0.5rem' }}>meiner</td>
+              <td style={{ padding: '0.5rem' }}>deiner</td>
+              <td style={{ padding: '0.5rem' }}>seiner</td>
+              <td style={{ padding: '0.5rem' }}>ihrer</td>
+              <td style={{ padding: '0.5rem' }}>unser</td>
+              <td style={{ padding: '0.5rem' }}>euer</td>
+              <td style={{ padding: '0.5rem' }}>ihrer / Ihrer</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 style={{ marginBottom: '0.5rem' }}>Possessive Pronouns: <em>dein</em> (your)</h4>
+        <p style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '1rem' }}>
+          Possessives use the same endings as <em>ein</em>. The ending matches the noun that is owned, not the person who owns it. The same pattern applies to <em>mein, sein, ihr, unser, euer</em> and <em>Ihr</em>.
+        </p>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '500px' }}>
+          <thead>
+            <tr style={{ borderBottom: '2px solid var(--border)' }}>
+              <th style={{ padding: '0.5rem' }}>Case</th>
+              <th style={{ padding: '0.5rem', color: 'var(--primary)' }}>Masc.</th>
+              <th style={{ padding: '0.5rem', color: 'var(--danger)' }}>Fem.</th>
+              <th style={{ padding: '0.5rem', color: 'var(--success)' }}>Neut.</th>
+              <th style={{ padding: '0.5rem', color: 'var(--warning)' }}>Plural</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Nominative</td>
+              <td style={{ padding: '0.5rem' }}>dein</td>
+              <td style={{ padding: '0.5rem' }}>deine</td>
+              <td style={{ padding: '0.5rem' }}>dein</td>
+              <td style={{ padding: '0.5rem' }}>deine</td>
+            </tr>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Accusative</td>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>deinen</td>
+              <td style={{ padding: '0.5rem' }}>deine</td>
+              <td style={{ padding: '0.5rem' }}>dein</td>
+              <td style={{ padding: '0.5rem' }}>deine</td>
+            </tr>
+            <tr style={{ borderBottom: '1px solid var(--border)' }}>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Dative</td>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>deinem</td>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold', color: 'var(--danger)' }}>deiner</td>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold', color: 'var(--success)' }}>deinem</td>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold', color: 'var(--warning)' }}>deinen (+n)</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.5rem', fontWeight: 'bold' }}>Genitive</td>
+              <td style={{ padding: '0.5rem' }}>deines (+s)</td>
+              <td style={{ padding: '0.5rem' }}>deiner</td>
+              <td style={{ padding: '0.5rem' }}>deines (+s)</td>
+              <td style={{ padding: '0.5rem' }}>deiner</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style={{ marginTop: '1rem', fontStyle: 'italic', lineHeight: '1.6' }}>
+          Ich sehe <strong>deinen</strong> Bruder. (I see your brother.) &nbsp; Ich helfe <strong>deinem</strong> Bruder. (I help your brother.) &nbsp; Ich spreche mit <strong>deiner</strong> Schwester. (I speak with your sister.)
+        </p>
       </div>
 
       <div id="prepositions" className="card" style={{ marginBottom: '2rem' }}>
