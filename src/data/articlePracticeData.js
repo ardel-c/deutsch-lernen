@@ -1075,5 +1075,513 @@ export const articlePracticeData = [
     gender: "die",
     caseRequired: "Accusative",
     explanation: "'hätte gerne' (would like to have) requires an accusative object. 'Pizza' is feminine, so 'eine'."
+  },
+
+  // B1-B2: Nominative
+  {
+    id: 108,
+    prefix: "Obwohl ",
+    answer: "der",
+    suffix: " Vertrag schon unterschrieben war, gab es noch Probleme.",
+    noun: "Vertrag",
+    gender: "der",
+    caseRequired: "Nominative",
+    explanation: "'Vertrag' is the subject of the subordinate clause, so it is in the nominative. 'Vertrag' is masculine, so 'der'."
+  },
+  {
+    id: 109,
+    prefix: "Mir ist aufgefallen, dass ",
+    answer: "die",
+    suffix: " Stimmung im Büro angespannt ist.",
+    noun: "Stimmung",
+    gender: "die",
+    caseRequired: "Nominative",
+    explanation: "In the 'dass' clause, 'Stimmung' is the subject, so nominative. Feminine nouns take 'die' in the nominative."
+  },
+  {
+    id: 110,
+    prefix: "Es stellte sich heraus, dass ",
+    answer: "das",
+    suffix: " Gerücht völlig falsch war.",
+    noun: "Gerücht",
+    gender: "das",
+    caseRequired: "Nominative",
+    explanation: "'Gerücht' is the subject of the 'dass' clause (nominative). It is neuter, so 'das'."
+  },
+  {
+    id: 111,
+    prefix: "Gestern wurde ",
+    answer: "ein",
+    suffix: " neuer Bürgermeister gewählt.",
+    noun: "Bürgermeister",
+    gender: "der",
+    caseRequired: "Nominative",
+    explanation: "In the passive voice, the person/thing affected becomes the subject and is in the nominative. 'Bürgermeister' is masculine, so 'ein'."
+  },
+  {
+    id: 112,
+    prefix: "Morgen wird ",
+    answer: "eine",
+    suffix: " Entscheidung über das Projekt getroffen.",
+    noun: "Entscheidung",
+    gender: "die",
+    caseRequired: "Nominative",
+    explanation: "Passive voice: 'Entscheidung' is the subject, so nominative. Feminine, so 'eine'."
+  },
+  {
+    id: 113,
+    prefix: "Mein Bruder ist ",
+    answer: "ein",
+    suffix: " erfahrener Ingenieur.",
+    noun: "Ingenieur",
+    gender: "der",
+    caseRequired: "Nominative",
+    explanation: "'sein' links two nominatives (Gleichsetzungsnominativ). 'Ingenieur' is masculine, so 'ein' (not 'einen')."
+  },
+  {
+    id: 114,
+    prefix: "Sie möchte später ",
+    answer: "eine",
+    suffix: " erfolgreiche Ärztin werden.",
+    noun: "Ärztin",
+    gender: "die",
+    caseRequired: "Nominative",
+    explanation: "Like 'sein', the verb 'werden' takes a predicate nominative. 'Ärztin' is feminine, so 'eine'."
+  },
+  {
+    id: 115,
+    prefix: "Wer hätte gedacht, dass ",
+    answer: "der",
+    suffix: " Umzug so anstrengend sein würde?",
+    noun: "Umzug",
+    gender: "der",
+    caseRequired: "Nominative",
+    explanation: "'Umzug' is the subject of the 'dass' clause, so nominative. Masculine, so 'der'."
+  },
+  {
+    id: 116,
+    prefix: "Trotz aller Bemühungen ist ",
+    answer: "das",
+    suffix: " Experiment gescheitert.",
+    noun: "Experiment",
+    gender: "das",
+    caseRequired: "Nominative",
+    explanation: "'Experiment' is the subject of 'ist gescheitert', so nominative. Neuter, so 'das'."
+  },
+  {
+    id: 117,
+    prefix: "Mich interessiert vor allem, wie ",
+    answer: "die",
+    suffix: " Umfrage ausgewertet wird.",
+    noun: "Umfrage",
+    gender: "die",
+    caseRequired: "Nominative",
+    explanation: "In the passive clause 'wie ... ausgewertet wird', 'Umfrage' is the subject (nominative). Feminine, so 'die'."
+  },
+
+  // B1-B2: Accusative
+  {
+    id: 118,
+    prefix: "Ich kann mir ",
+    answer: "den",
+    suffix: " Unterschied zwischen den beiden Wörtern nicht merken.",
+    noun: "Unterschied",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'sich (Dat.) etwas (Akk.) merken': 'mir' is the dative reflexive, and the thing remembered is accusative. Masculine 'der' becomes 'den'."
+  },
+  {
+    id: 119,
+    prefix: "Hast du schon ",
+    answer: "einen",
+    suffix: " Antrag auf Elterngeld gestellt?",
+    noun: "Antrag",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'einen Antrag stellen' (to submit an application): 'Antrag' is the direct object, so accusative. Masculine, so 'einen'."
+  },
+  {
+    id: 120,
+    prefix: "Wir müssen ",
+    answer: "die",
+    suffix: " Verantwortung für unsere Fehler übernehmen.",
+    noun: "Verantwortung",
+    gender: "die",
+    caseRequired: "Accusative",
+    explanation: "'übernehmen' takes an accusative object. Feminine 'die' stays 'die' in the accusative."
+  },
+  {
+    id: 121,
+    prefix: "Er hat sich ",
+    answer: "einen",
+    suffix: " neuen Laptop gekauft, obwohl der alte noch funktionierte.",
+    noun: "Laptop",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'sich' is a dative reflexive here (for himself); the thing bought is the accusative object. Masculine, so 'einen'."
+  },
+  {
+    id: 122,
+    prefix: "Ich freue mich schon auf ",
+    answer: "den",
+    suffix: " Urlaub in Italien.",
+    noun: "Urlaub",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'sich freuen auf' (to look forward to) always takes the accusative. Masculine 'der' becomes 'den'."
+  },
+  {
+    id: 123,
+    prefix: "Sie ärgert sich über ",
+    answer: "den",
+    suffix: " ständigen Lärm der Nachbarn.",
+    noun: "Lärm",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'sich ärgern über' takes the accusative. 'Lärm' is masculine, so 'den'."
+  },
+  {
+    id: 124,
+    prefix: "Denkst du noch an ",
+    answer: "das",
+    suffix: " Treffen morgen früh?",
+    noun: "Treffen",
+    gender: "das",
+    caseRequired: "Accusative",
+    explanation: "'denken an' (to remember/think of) takes the accusative. Neuter 'das' stays 'das'."
+  },
+  {
+    id: 125,
+    prefix: "Wir warten schon seit einer Stunde auf ",
+    answer: "den",
+    suffix: " Techniker.",
+    noun: "Techniker",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'warten auf' always takes the accusative. Masculine 'der' becomes 'den'."
+  },
+  {
+    id: 126,
+    prefix: "Ohne ",
+    answer: "einen",
+    suffix: " gültigen Ausweis darfst du nicht einreisen.",
+    noun: "Ausweis",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'ohne' is an accusative preposition. 'Ausweis' is masculine, so 'einen'."
+  },
+  {
+    id: 127,
+    prefix: "Die Firma hat sich gegen ",
+    answer: "die",
+    suffix: " Fusion entschieden.",
+    noun: "Fusion",
+    gender: "die",
+    caseRequired: "Accusative",
+    explanation: "'sich entscheiden gegen/für' takes the accusative ('gegen' is always accusative). Feminine, so 'die'."
+  },
+  {
+    id: 128,
+    prefix: "Ich interessiere mich sehr für ",
+    answer: "das",
+    suffix: " Thema Nachhaltigkeit.",
+    noun: "Thema",
+    gender: "das",
+    caseRequired: "Accusative",
+    explanation: "'sich interessieren für' takes the accusative. Neuter 'das' stays 'das'."
+  },
+  {
+    id: 129,
+    prefix: "Könnten Sie mir bitte ",
+    answer: "eine",
+    suffix: " Quittung ausstellen?",
+    noun: "Quittung",
+    gender: "die",
+    caseRequired: "Accusative",
+    explanation: "'mir' is the indirect (dative) object; 'Quittung' is the direct object, so accusative. Feminine, so 'eine'."
+  },
+  {
+    id: 130,
+    prefix: "Er beschwerte sich beim Kellner über ",
+    answer: "das",
+    suffix: " kalte Essen.",
+    noun: "Essen",
+    gender: "das",
+    caseRequired: "Accusative",
+    explanation: "'sich beschweren über' (to complain about) takes the accusative. Neuter, so 'das'."
+  },
+  {
+    id: 131,
+    prefix: "Kannst du dich an ",
+    answer: "den",
+    suffix: " Namen des Hotels erinnern?",
+    noun: "Name",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'sich erinnern an' takes the accusative. 'Name' is masculine (and an n-noun: den Namen), so 'den'."
+  },
+  {
+    id: 132,
+    prefix: "Durch ",
+    answer: "den",
+    suffix: " Streik fielen viele Züge aus.",
+    noun: "Streik",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'durch' is an accusative preposition (here: because of). Masculine 'der' becomes 'den'."
+  },
+  {
+    id: 133,
+    prefix: "Wir haben endlich ",
+    answer: "eine",
+    suffix: " Wohnung mit Balkon gefunden.",
+    noun: "Wohnung",
+    gender: "die",
+    caseRequired: "Accusative",
+    explanation: "'finden' takes a direct object in the accusative. Feminine, so 'eine'."
+  },
+
+  // B1-B2: Dative
+  {
+    id: 134,
+    prefix: "Kannst du ",
+    answer: "dem",
+    suffix: " Kunden bitte die Rechnung schicken?",
+    noun: "Kunde",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "With 'schicken', the recipient is the dative object. 'Kunde' is a masculine n-noun: dem Kunden."
+  },
+  {
+    id: 135,
+    prefix: "Das Kleid gefällt ",
+    answer: "der",
+    suffix: " Braut überhaupt nicht.",
+    noun: "Braut",
+    gender: "die",
+    caseRequired: "Dative",
+    explanation: "'gefallen' is a dative verb. Feminine 'die' becomes 'der' in the dative."
+  },
+  {
+    id: 136,
+    prefix: "Ich habe ",
+    answer: "dem",
+    suffix: " Kollegen bei der Präsentation geholfen.",
+    noun: "Kollege",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "'helfen' always takes the dative. 'Kollege' is a masculine n-noun: dem Kollegen."
+  },
+  {
+    id: 137,
+    prefix: "Diese Tasche gehört ",
+    answer: "einer",
+    suffix: " Kundin, die gerade gegangen ist.",
+    noun: "Kundin",
+    gender: "die",
+    caseRequired: "Dative",
+    explanation: "'gehören' is a dative verb. Feminine indefinite 'eine' becomes 'einer' in the dative."
+  },
+  {
+    id: 138,
+    prefix: "Nach ",
+    answer: "dem",
+    suffix: " Abendessen gehen wir noch spazieren.",
+    noun: "Abendessen",
+    gender: "das",
+    caseRequired: "Dative",
+    explanation: "'nach' is always a dative preposition. Neuter 'das' becomes 'dem'."
+  },
+  {
+    id: 139,
+    prefix: "Seit ",
+    answer: "dem",
+    suffix: " Unfall fährt er nicht mehr Auto.",
+    noun: "Unfall",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "'seit' is always a dative preposition. Masculine 'der' becomes 'dem'."
+  },
+  {
+    id: 140,
+    prefix: "Sie arbeitet seit Jahren bei ",
+    answer: "einer",
+    suffix: " internationalen Firma.",
+    noun: "Firma",
+    gender: "die",
+    caseRequired: "Dative",
+    explanation: "'bei' is a dative preposition. Feminine 'eine' becomes 'einer'."
+  },
+  {
+    id: 141,
+    prefix: "Wir müssen ",
+    answer: "dem",
+    suffix: " Chef die Ergebnisse bis Freitag mitteilen.",
+    noun: "Chef",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "'jemandem etwas mitteilen': the person informed is dative, the information is accusative. Masculine, so 'dem'."
+  },
+  {
+    id: 142,
+    prefix: "Ich kann ",
+    answer: "dem",
+    suffix: " Vorschlag leider nicht zustimmen.",
+    noun: "Vorschlag",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "'zustimmen' (to agree with) is a dative verb. Masculine 'der' becomes 'dem'."
+  },
+  {
+    id: 143,
+    prefix: "Der Arzt hat ",
+    answer: "der",
+    suffix: " Patientin ein neues Medikament verschrieben.",
+    noun: "Patientin",
+    gender: "die",
+    caseRequired: "Dative",
+    explanation: "'verschreiben' has a dative recipient (the patient) and an accusative object (the medicine). Feminine 'die' becomes 'der'."
+  },
+  {
+    id: 144,
+    prefix: "Mit ",
+    answer: "einem",
+    suffix: " Stipendium konnte sie im Ausland studieren.",
+    noun: "Stipendium",
+    gender: "das",
+    caseRequired: "Dative",
+    explanation: "'mit' is always dative. Neuter 'ein' becomes 'einem'."
+  },
+  {
+    id: 145,
+    prefix: "Außer ",
+    answer: "dem",
+    suffix: " Direktor wusste niemand von dem Plan.",
+    noun: "Direktor",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "'außer' (except) is a dative preposition. Masculine 'der' becomes 'dem'."
+  },
+  {
+    id: 146,
+    prefix: "Gegenüber ",
+    answer: "dem",
+    suffix: " Rathaus gibt es ein gemütliches Café.",
+    noun: "Rathaus",
+    gender: "das",
+    caseRequired: "Dative",
+    explanation: "'gegenüber' (opposite) takes the dative. Neuter 'das' becomes 'dem'."
+  },
+  {
+    id: 147,
+    prefix: "Ich gratuliere ",
+    answer: "der",
+    suffix: " Mannschaft zum Sieg!",
+    noun: "Mannschaft",
+    gender: "die",
+    caseRequired: "Dative",
+    explanation: "'gratulieren' is a dative verb. Feminine 'die' becomes 'der'."
+  },
+  {
+    id: 148,
+    prefix: "Er ist zufällig ",
+    answer: "einem",
+    suffix: " alten Freund aus der Schulzeit begegnet.",
+    noun: "Freund",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "'begegnen' (to run into) is a dative verb. Masculine 'ein' becomes 'einem'."
+  },
+  {
+    id: 149,
+    prefix: "Wir bedanken uns bei ",
+    answer: "der",
+    suffix: " Organisatorin für die tolle Veranstaltung.",
+    noun: "Organisatorin",
+    gender: "die",
+    caseRequired: "Dative",
+    explanation: "'sich bedanken bei' (person) takes the dative ('bei' is always dative). Feminine 'die' becomes 'der'."
+  },
+
+  // B1-B2: Two-Way Prepositions
+  {
+    id: 150,
+    prefix: "Er hängt das Bild an ",
+    answer: "die",
+    suffix: " Wand über dem Sofa.",
+    noun: "Wand",
+    gender: "die",
+    caseRequired: "Accusative",
+    explanation: "'an' is a two-way preposition. 'hängen' (transitive) shows movement to a destination (Wohin?), so accusative. Feminine, so 'die'."
+  },
+  {
+    id: 151,
+    prefix: "Das Bild hängt schon seit Jahren an ",
+    answer: "der",
+    suffix: " Wand im Flur.",
+    noun: "Wand",
+    gender: "die",
+    caseRequired: "Dative",
+    explanation: "'an' is a two-way preposition. Here 'hängen' describes a static position (Wo?), so dative. Feminine 'die' becomes 'der'."
+  },
+  {
+    id: 152,
+    prefix: "Wir haben uns in ",
+    answer: "einem",
+    suffix: " kleinen Restaurant am Hafen getroffen.",
+    noun: "Restaurant",
+    gender: "das",
+    caseRequired: "Dative",
+    explanation: "'in' is a two-way preposition. The meeting happened at a location (Wo?), so dative. Neuter 'ein' becomes 'einem'."
+  },
+  {
+    id: 153,
+    prefix: "Stell die Milch bitte sofort in ",
+    answer: "den",
+    suffix: " Kühlschrank!",
+    noun: "Kühlschrank",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'in' is a two-way preposition. 'stellen' indicates movement to a destination (Wohin?), so accusative. Masculine, so 'den'."
+  },
+  {
+    id: 154,
+    prefix: "Der Hund hat sich unter ",
+    answer: "das",
+    suffix: " Bett verkrochen.",
+    noun: "Bett",
+    gender: "das",
+    caseRequired: "Accusative",
+    explanation: "'unter' is a two-way preposition. 'sich verkriechen' means crawling to a place (Wohin?), so accusative. Neuter stays 'das'."
+  },
+  {
+    id: 155,
+    prefix: "Die Katze schläft am liebsten unter ",
+    answer: "dem",
+    suffix: " Sofa.",
+    noun: "Sofa",
+    gender: "das",
+    caseRequired: "Dative",
+    explanation: "'unter' is a two-way preposition. 'schlafen' describes a location (Wo?), so dative. Neuter 'das' becomes 'dem'."
+  },
+  {
+    id: 156,
+    prefix: "Zwischen ",
+    answer: "dem",
+    suffix: " Supermarkt und der Apotheke ist eine Bushaltestelle.",
+    noun: "Supermarkt",
+    gender: "der",
+    caseRequired: "Dative",
+    explanation: "'zwischen' is a two-way preposition. This describes a fixed location (Wo?), so dative. Masculine 'der' becomes 'dem'."
+  },
+  {
+    id: 157,
+    prefix: "Sie hat ihre Brille irgendwo auf ",
+    answer: "den",
+    suffix: " Schreibtisch gelegt.",
+    noun: "Schreibtisch",
+    gender: "der",
+    caseRequired: "Accusative",
+    explanation: "'auf' is a two-way preposition. 'legen' shows movement to a destination (Wohin?), so accusative. Masculine, so 'den'."
   }
 ];
