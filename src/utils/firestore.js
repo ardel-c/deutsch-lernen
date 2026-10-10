@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, serverTimestamp, onSnapshot, orderBy, writeBatch, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, serverTimestamp, onSnapshot, orderBy, writeBatch, arrayUnion, arrayRemove, increment, limit } from 'firebase/firestore';
 
 export async function addWord(userId, wordData) {
   const wordsRef = collection(db, 'words');
@@ -221,4 +221,50 @@ export async function deleteGlobalTag(userId, tagToDelete, words, phrases) {
   if (hasUpdates) {
     await batch.commit();
   }
+}
+
+// Practice results
+// users/{uid}/practiceSessions/{id}: one document per finished round
+// users/{uid}/practiceStats/{exercise}: lifetime correct/incorrect counts per question id
+export async function savePracticeSession(userId, exercise, filter, results) {
+  const batch = writeBatch(db);
+  const correct = results.filter(r => r.correct).length;
+
+  const sessionRef = doc(collection(db, 'users', userId, 'practiceSessions'));
+  batch.set(sessionRef, {
+    exercise,
+    filter,
+    correct,
+    total: results.length,
+    results,
+    createdAt: serverTimestamp()
+  });
+
+  const now = new Date().toISOString();
+  const questions = {};
+  results.forEach(r => {
+    questions[String(r.id)] = {
+      correct: increment(r.correct ? 1 : 0),
+      incorrect: increment(r.correct ? 0 : 1),
+      lastCorrect: r.correct,
+      lastAnswer: r.answer,
+      lastSeen: now
+    };
+  });
+  batch.set(doc(db, 'users', userId, 'practiceStats', exercise), { questions }, { merge: true });
+
+  await batch.commit();
+}
+
+export function subscribeToPracticeStats(userId, exercise, callback) {
+  return onSnapshot(doc(db, 'users', userId, 'practiceStats', exercise), (snapshot) => {
+    callback(snapshot.exists() ? snapshot.data().questions || {} : {});
+  });
+}
+
+export function subscribeToPracticeSessions(userId, callback, max = 500) {
+  const q = query(collection(db, 'users', userId, 'practiceSessions'), orderBy('createdAt', 'desc'), limit(max));
+  return onSnapshot(q, (snapshot) => {
+    callback(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+  });
 }

@@ -144,6 +144,7 @@ export const articlePracticeData = [
     noun: "Tisch",
     gender: "der",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. Because there is movement/action towards a destination (legen), we use Accusative. 'Tisch' is masculine, so 'den'."
   },
   {
@@ -154,6 +155,7 @@ export const articlePracticeData = [
     noun: "Tisch",
     gender: "der",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. Because this describes a static location (liegen), we use Dative. 'Tisch' is masculine, so 'dem'."
   },
   {
@@ -164,6 +166,7 @@ export const articlePracticeData = [
     noun: "Schule",
     gender: "die",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'in' is a two-way preposition. 'Gehen' implies movement to a destination, so it takes Accusative. Feminine remains 'die'."
   },
   {
@@ -174,6 +177,7 @@ export const articlePracticeData = [
     noun: "Schule",
     gender: "die",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'in' is a two-way preposition. 'Lernen' happens at a static location, so it takes Dative. Feminine 'die' becomes 'der' in the dative."
   },
   {
@@ -354,6 +358,7 @@ export const articlePracticeData = [
     noun: "Haus",
     gender: "das",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'hinter' is a two-way preposition. 'Laufen' shows movement to a destination, so it takes Accusative. Neuter remains 'das'."
   },
   {
@@ -364,6 +369,7 @@ export const articlePracticeData = [
     noun: "Haus",
     gender: "das",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'hinter' is a two-way preposition. 'Schlafen' describes a static location, so it takes Dative. Neuter 'das' becomes 'dem'."
   },
   {
@@ -374,6 +380,7 @@ export const articlePracticeData = [
     noun: "Wand",
     gender: "die",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'an' is a two-way preposition. The action of hanging (hängen) moves the picture to a destination, so it's Accusative. Feminine remains 'die'."
   },
   {
@@ -384,6 +391,7 @@ export const articlePracticeData = [
     noun: "Wand",
     gender: "die",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'an' is a two-way preposition. The picture is already hanging there (static location), so it's Dative. Feminine 'die' becomes 'der'."
   },
   {
@@ -394,6 +402,7 @@ export const articlePracticeData = [
     noun: "Wolken",
     gender: "plural",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'über' is a two-way preposition. The plane is moving across/over them (path), which takes Accusative. Plural 'die' remains 'die'."
   },
   {
@@ -404,6 +413,7 @@ export const articlePracticeData = [
     noun: "Tisch",
     gender: "der",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'über' is a two-way preposition. The lamp is hanging statically, so it's Dative. Masculine 'der' becomes 'dem'."
   },
   {
@@ -414,6 +424,7 @@ export const articlePracticeData = [
     noun: "Stuhl",
     gender: "der",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'neben' is a two-way preposition. 'Sich stellen' means to position oneself (movement), so Accusative. Masculine becomes 'den'."
   },
   {
@@ -424,6 +435,7 @@ export const articlePracticeData = [
     noun: "Stuhl",
     gender: "der",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'neben' is a two-way preposition. 'Stehen' means to stand (static location), so Dative. Masculine 'der' becomes 'dem'."
   },
   {
@@ -684,6 +696,7 @@ export const articlePracticeData = [
     noun: "Tisch",
     gender: "der",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. 'Stellen' (to place upright) is a movement to a destination, so it takes Accusative. Masculine becomes 'den'."
   },
   {
@@ -694,6 +707,7 @@ export const articlePracticeData = [
     noun: "Tisch",
     gender: "der",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. 'Stehen' (to stand) describes a static location, so it takes Dative. Masculine 'der' becomes 'dem'."
   },
   {
@@ -704,6 +718,7 @@ export const articlePracticeData = [
     noun: "Tür",
     gender: "die",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'an' is a two-way preposition. 'Hängen' (active) is movement to a destination, so Accusative. Feminine remains 'die'."
   },
   {
@@ -714,6 +729,7 @@ export const articlePracticeData = [
     noun: "Tür",
     gender: "die",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'an' is a two-way preposition. 'Hängen' (passive state) is static location, so Dative. Feminine 'die' becomes 'der'."
   },
   {
@@ -724,6 +740,7 @@ export const articlePracticeData = [
     noun: "Tisch",
     gender: "der",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'unter' is a two-way preposition. 'Gehen' is movement to a destination, so Accusative. Masculine 'der' becomes 'den'."
   },
   {
@@ -734,6 +751,7 @@ export const articlePracticeData = [
     noun: "Tisch",
     gender: "der",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'unter' is a two-way preposition. 'Schlafen' describes static location, so Dative. Masculine 'der' becomes 'dem'."
   },
   {
@@ -744,6 +762,7 @@ export const articlePracticeData = [
     noun: "Sofa",
     gender: "das",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. 'Sich setzen' (to sit oneself down) is movement, so Accusative. Neuter remains 'das'."
   },
   {
@@ -754,6 +773,7 @@ export const articlePracticeData = [
     noun: "Sofa",
     gender: "das",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. 'Sitzen' (to be sitting) is a static location, so Dative. Neuter 'das' becomes 'dem'."
   },
   {
@@ -834,6 +854,7 @@ export const articlePracticeData = [
     noun: "Ampel",
     gender: "die",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'an' is a two-way preposition. 'Warten' (waiting) is a static action (no movement to a destination), so Dative. Feminine 'die' becomes 'der'."
   },
   {
@@ -934,6 +955,7 @@ export const articlePracticeData = [
     noun: "Wüste",
     gender: "die",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'in' is a two-way preposition. 'Wachsen' here describes a static location (growing in place), so Dative. Feminine 'die' becomes 'der'."
   },
   {
@@ -1044,6 +1066,7 @@ export const articlePracticeData = [
     noun: "Straßenbahn",
     gender: "die",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'in' is a two-way preposition. 'Sein' (bin) describes a static location (being inside), so Dative. Feminine 'die' becomes 'der'."
   },
   {
@@ -1054,6 +1077,7 @@ export const articlePracticeData = [
     noun: "Klo",
     gender: "das",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. Here it implies movement to a destination, so Accusative. Neuter 'das' remains 'das'."
   },
   {
@@ -1512,6 +1536,7 @@ export const articlePracticeData = [
     noun: "Wand",
     gender: "die",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'an' is a two-way preposition. 'hängen' (transitive) shows movement to a destination (Wohin?), so accusative. Feminine, so 'die'."
   },
   {
@@ -1522,6 +1547,7 @@ export const articlePracticeData = [
     noun: "Wand",
     gender: "die",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'an' is a two-way preposition. Here 'hängen' describes a static position (Wo?), so dative. Feminine 'die' becomes 'der'."
   },
   {
@@ -1532,6 +1558,7 @@ export const articlePracticeData = [
     noun: "Restaurant",
     gender: "das",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'in' is a two-way preposition. The meeting happened at a location (Wo?), so dative. Neuter 'ein' becomes 'einem'."
   },
   {
@@ -1542,6 +1569,7 @@ export const articlePracticeData = [
     noun: "Kühlschrank",
     gender: "der",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'in' is a two-way preposition. 'stellen' indicates movement to a destination (Wohin?), so accusative. Masculine, so 'den'."
   },
   {
@@ -1552,6 +1580,7 @@ export const articlePracticeData = [
     noun: "Bett",
     gender: "das",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'unter' is a two-way preposition. 'sich verkriechen' means crawling to a place (Wohin?), so accusative. Neuter stays 'das'."
   },
   {
@@ -1562,6 +1591,7 @@ export const articlePracticeData = [
     noun: "Sofa",
     gender: "das",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'unter' is a two-way preposition. 'schlafen' describes a location (Wo?), so dative. Neuter 'das' becomes 'dem'."
   },
   {
@@ -1572,6 +1602,7 @@ export const articlePracticeData = [
     noun: "Supermarkt",
     gender: "der",
     caseRequired: "Dative",
+    twoWay: true,
     explanation: "'zwischen' is a two-way preposition. This describes a fixed location (Wo?), so dative. Masculine 'der' becomes 'dem'."
   },
   {
@@ -1582,6 +1613,162 @@ export const articlePracticeData = [
     noun: "Schreibtisch",
     gender: "der",
     caseRequired: "Accusative",
+    twoWay: true,
     explanation: "'auf' is a two-way preposition. 'legen' shows movement to a destination (Wohin?), so accusative. Masculine, so 'den'."
+  },
+
+  // B1-B2: Plural
+  {
+    id: 158,
+    prefix: "",
+    answer: "Die",
+    suffix: " Kinder spielen draußen im Garten.",
+    noun: "Kinder",
+    gender: "plural",
+    caseRequired: "Nominative",
+    explanation: "'Kinder' is the subject, so nominative. In the plural, the nominative article is always 'die' regardless of gender."
+  },
+  {
+    id: 159,
+    prefix: "Wann kommen ",
+    answer: "die",
+    suffix: " Gäste an?",
+    noun: "Gäste",
+    gender: "plural",
+    caseRequired: "Nominative",
+    explanation: "'Gäste' is the subject of 'ankommen', so nominative. Plural nominative is 'die'."
+  },
+  {
+    id: 160,
+    prefix: "Mir gefallen ",
+    answer: "die",
+    suffix: " neuen Möbel sehr gut.",
+    noun: "Möbel",
+    gender: "plural",
+    caseRequired: "Nominative",
+    explanation: "With 'gefallen', the thing that pleases is the subject (nominative); 'mir' is dative. 'Möbel' is plural-only, so 'die'."
+  },
+  {
+    id: 161,
+    prefix: "Hast du ",
+    answer: "die",
+    suffix: " Unterlagen schon ausgedruckt?",
+    noun: "Unterlagen",
+    gender: "plural",
+    caseRequired: "Accusative",
+    explanation: "'ausdrucken' takes an accusative object. Plural accusative is 'die' (same as nominative)."
+  },
+  {
+    id: 162,
+    prefix: "Wir müssen noch ",
+    answer: "die",
+    suffix: " Fenster putzen.",
+    noun: "Fenster",
+    gender: "plural",
+    caseRequired: "Accusative",
+    explanation: "'putzen' takes an accusative object. 'Fenster' (plural, unchanged form) takes 'die' in the accusative."
+  },
+  {
+    id: 163,
+    prefix: "Er hat ",
+    answer: "die",
+    suffix: " Schlüssel im Auto vergessen.",
+    noun: "Schlüssel",
+    gender: "plural",
+    caseRequired: "Accusative",
+    explanation: "'vergessen' takes an accusative object. Plural accusative is 'die'."
+  },
+  {
+    id: 164,
+    prefix: "Ich kann mich nicht an ",
+    answer: "die",
+    suffix: " Namen der Teilnehmer erinnern.",
+    noun: "Namen",
+    gender: "plural",
+    caseRequired: "Accusative",
+    explanation: "'sich erinnern an' takes the accusative. Plural accusative is 'die'."
+  },
+  {
+    id: 165,
+    prefix: "Ich habe ",
+    answer: "den",
+    suffix: " Kindern eine Geschichte vorgelesen.",
+    noun: "Kindern",
+    gender: "plural",
+    caseRequired: "Dative",
+    explanation: "'vorlesen' has a dative recipient (the children). Plural dative is 'den', and the noun adds -n: Kinder → Kindern."
+  },
+  {
+    id: 166,
+    prefix: "Mit ",
+    answer: "den",
+    suffix: " Kollegen verstehe ich mich sehr gut.",
+    noun: "Kollegen",
+    gender: "plural",
+    caseRequired: "Dative",
+    explanation: "'mit' is always dative. Plural dative is 'den'; 'Kollegen' already ends in -n."
+  },
+  {
+    id: 167,
+    prefix: "Die Lehrerin hat ",
+    answer: "den",
+    suffix: " Studenten die Prüfungsergebnisse mitgeteilt.",
+    noun: "Studenten",
+    gender: "plural",
+    caseRequired: "Dative",
+    explanation: "'mitteilen' has a dative recipient. Plural dative is 'den'."
+  },
+  {
+    id: 168,
+    prefix: "Nach ",
+    answer: "den",
+    suffix: " Ferien beginnt das neue Semester.",
+    noun: "Ferien",
+    gender: "plural",
+    caseRequired: "Dative",
+    explanation: "'nach' is always dative. 'Ferien' is plural-only, and plural dative is 'den'."
+  },
+  {
+    id: 169,
+    prefix: "Diese Bücher gehören ",
+    answer: "den",
+    suffix: " Nachbarn.",
+    noun: "Nachbarn",
+    gender: "plural",
+    caseRequired: "Dative",
+    explanation: "'gehören' is a dative verb. Plural dative is 'den'."
+  },
+  {
+    id: 170,
+    prefix: "Die Kinder spielen zwischen ",
+    answer: "den",
+    suffix: " Bäumen.",
+    noun: "Bäumen",
+    gender: "plural",
+    caseRequired: "Dative",
+    twoWay: true,
+    explanation: "'zwischen' is a two-way preposition. 'spielen' describes a location (Wo?), so dative. Plural dative is 'den', and the noun adds -n: Bäume → Bäumen."
+  },
+  {
+    id: 171,
+    prefix: "Leg die Zeitschriften bitte auf ",
+    answer: "die",
+    suffix: " Regale im Wohnzimmer.",
+    noun: "Regale",
+    gender: "plural",
+    caseRequired: "Accusative",
+    twoWay: true,
+    explanation: "'auf' is a two-way preposition. 'legen' shows movement to a destination (Wohin?), so accusative. Plural accusative is 'die'."
+  },
+  {
+    id: 172,
+    prefix: "Die Fahrräder stehen vor ",
+    answer: "den",
+    suffix: " Häusern.",
+    noun: "Häusern",
+    gender: "plural",
+    caseRequired: "Dative",
+    twoWay: true,
+    explanation: "'vor' is a two-way preposition. 'stehen' describes a location (Wo?), so dative. Plural dative is 'den', and the noun adds -n: Häuser → Häusern."
   }
 ];

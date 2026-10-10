@@ -1,7 +1,16 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
-import { FiHome, FiPlusCircle, FiBookOpen, FiBookmark, FiDatabase, FiLogOut, FiEdit3 } from 'react-icons/fi';
+
+const links = [
+  { to: '/', label: 'Home', end: true },
+  { to: '/add', label: 'Add' },
+  { to: '/review', label: 'Review' },
+  { to: '/practice', label: 'Practice' },
+  { to: '/grammar', label: 'Grammar' },
+  { to: '/stats', label: 'Stats' },
+  { to: '/data', label: 'Data' }
+];
 
 export default function Navbar() {
   const { currentUser, logout } = useAuth();
@@ -17,29 +26,26 @@ export default function Navbar() {
       <Link to="/" style={{ textDecoration: 'none', color: 'var(--text-color)', fontSize: '1.25rem', fontWeight: 'bold' }}>
         Deutsch Lernen
       </Link>
-      <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+      <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
         {currentUser && (
           <>
-            <Link to="/" title="My Vocab" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
-              <FiHome size={24} />
-            </Link>
-            <Link to="/add" title="Add Word/Phrase" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
-              <FiPlusCircle size={24} />
-            </Link>
-            <Link to="/review" title="Review" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
-              <FiBookOpen size={24} />
-            </Link>
-            <Link to="/grammar" title="Grammar Reference" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
-              <FiBookmark size={24} />
-            </Link>
-            <Link to="/practice" title="Article Practice" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
-              <FiEdit3 size={24} />
-            </Link>
-            <Link to="/data" title="Data Management" style={{ color: 'var(--text-color)', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
-              <FiDatabase size={24} />
-            </Link>
-            <button onClick={handleLogout} title="Logout" style={{ background: 'transparent', color: 'var(--danger)', border: 'none', padding: 0, display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              <FiLogOut size={24} />
+            {links.map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.end}
+                style={({ isActive }) => ({
+                  color: isActive ? 'var(--primary)' : 'var(--text-color)',
+                  fontWeight: isActive ? '600' : '400',
+                  textDecoration: 'none',
+                  transition: 'color 0.2s'
+                })}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+            <button onClick={handleLogout} style={{ background: 'transparent', color: 'var(--danger)', border: 'none', padding: 0, cursor: 'pointer', font: 'inherit' }}>
+              Logout
             </button>
           </>
         )}

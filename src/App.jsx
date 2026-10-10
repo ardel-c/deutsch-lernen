@@ -10,6 +10,9 @@ import AnkiReview from './components/AnkiReview';
 import GrammarReference from './components/GrammarReference';
 import ArticlePractice from './components/ArticlePractice';
 import DataManagement from './components/DataManagement';
+import AdjectivePractice from './components/AdjectivePractice';
+import GenderDrill from './components/GenderDrill';
+import Stats from './components/Stats';
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -32,6 +35,9 @@ function AppContent() {
         <Route path="/review" element={<PrivateRoute><AnkiReview /></PrivateRoute>} />
         <Route path="/grammar" element={<PrivateRoute><GrammarReference /></PrivateRoute>} />
         <Route path="/practice" element={<PrivateRoute><ArticlePractice /></PrivateRoute>} />
+        <Route path="/practice/adjectives" element={<PrivateRoute><AdjectivePractice /></PrivateRoute>} />
+        <Route path="/practice/gender" element={<PrivateRoute><GenderDrill /></PrivateRoute>} />
+        <Route path="/stats" element={<PrivateRoute><Stats /></PrivateRoute>} />
         <Route path="/data" element={<PrivateRoute><DataManagement /></PrivateRoute>} />
       </Routes>
     </Router>
