@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWords } from '../context/WordContext';
-import { getItem, updateItem, updateWord } from '../utils/firestore';
+import { getItem, updateItem, updateWord, computeNeedsReview } from '../utils/firestore';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import TagsInput from './TagsInput';
 import { FiX } from 'react-icons/fi';
@@ -160,15 +160,7 @@ export default function EditItem() {
           wordData.caseRequired = caseRequired;
         }
 
-        // Recalculate needsReview
-        let needsReview = false;
-        if (wordData.type === 'noun' && !wordData.article) {
-          needsReview = true;
-        }
-        if (wordData.type === 'preposition' && !wordData.caseRequired) {
-          needsReview = true;
-        }
-        wordData.needsReview = needsReview;
+        wordData.needsReview = computeNeedsReview(wordData);
         wordData.relatedWords = relatedWords;
 
         await updateWord(id, wordData, oldRelatedWords);

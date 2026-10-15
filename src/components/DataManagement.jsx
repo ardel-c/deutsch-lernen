@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useWords } from '../context/WordContext';
 import { db } from '../firebase';
 import { collection, writeBatch, doc, serverTimestamp } from 'firebase/firestore';
-import { renameGlobalTag, deleteGlobalTag } from '../utils/firestore';
+import { renameGlobalTag, deleteGlobalTag, computeNeedsReview } from '../utils/firestore';
 import { parseCsv } from '../utils/csv';
 import { FiEdit2, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 
@@ -86,6 +86,24 @@ export default function DataManagement() {
     } catch (err) {
       console.error(err);
       setMessage('Failed to delete tag.');
+    } finally {
+      setManaging(false);
+    }
+  };
+
+  // Words whose saved "Missing Info" flag no longer matches the rules (e.g. older imports that flagged nouns without a plural)
+  const wronglyFlagged = words.filter(w => w.needsReview && !computeNeedsReview(w));
+
+  const handleFixFlags = async () => {
+    setManaging(true);
+    try {
+      const batch = writeBatch(db);
+      wronglyFlagged.forEach(w => batch.update(doc(db, 'words', w.id), { needsReview: false }));
+      await batch.commit();
+      setMessage(`Updated ${wronglyFlagged.length} words. They are no longer marked as Missing Info and will appear in Review.`);
+    } catch (err) {
+      console.error(err);
+      setMessage('Failed to update words.');
     } finally {
       setManaging(false);
     }
@@ -205,7 +223,7 @@ export default function DataManagement() {
               plural: plural || '',
               notes: notes || '',
               tags: tagsStr ? tagsStr.split(';').map(t => t.trim()).filter(Boolean) : [],
-              needsReview: (type.toLowerCase() === 'noun' && (!article || !plural)),
+              needsReview: computeNeedsReview({ type: type.toLowerCase() || 'other', article }),
               createdAt: serverTimestamp(),
               nextReviewDate: new Date().toISOString(),
               interval: 0,
@@ -300,6 +318,18 @@ export default function DataManagement() {
               </div>
             )}
           </div>
+          {wronglyFlagged.length > 0 && (
+            <div style={{ padding: '1rem', border: '1px solid var(--warning)', borderRadius: '8px' }}>
+              <h3 style={{ marginBottom: '0.5rem' }}>Fix "Missing Info" flags</h3>
+              <p style={{ opacity: 0.8, marginBottom: '1rem' }}>
+                {wronglyFlagged.length} {wronglyFlagged.length === 1 ? 'word is' : 'words are'} marked as Missing Info only because the plural is empty
+                (plural is optional). Marked words are left out of Review.
+              </p>
+              <button disabled={managing} onClick={handleFixFlags} style={{ ...buttonStyle, background: 'var(--primary)', color: '#fff' }}>
+                Fix {wronglyFlagged.length} {wronglyFlagged.length === 1 ? 'word' : 'words'}
+              </button>
+            </div>
+          )}
           <hr style={{ borderColor: 'var(--border)' }} />
           <div>
             <h3>Export Data</h3>

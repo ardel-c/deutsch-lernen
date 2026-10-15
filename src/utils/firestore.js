@@ -1,16 +1,17 @@
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, serverTimestamp, onSnapshot, orderBy, writeBatch, arrayUnion, arrayRemove, increment, limit } from 'firebase/firestore';
 
+// A word is "Missing Info" (and kept out of review) when required details are missing.
+// Plural is optional: many nouns have none (e.g. Weltraum, Atmung).
+export function computeNeedsReview(wordData) {
+  if (wordData.type === 'noun' && !wordData.article) return true;
+  if (wordData.type === 'preposition' && !wordData.caseRequired) return true;
+  return false;
+}
+
 export async function addWord(userId, wordData) {
   const wordsRef = collection(db, 'words');
-  // Determine if it needs review (e.g. missing article for noun, missing conjugation for verb)
-  let needsReview = false;
-  if (wordData.type === 'noun' && !wordData.article) {
-    needsReview = true;
-  }
-  if (wordData.type === 'preposition' && !wordData.caseRequired) {
-    needsReview = true;
-  }
+  const needsReview = computeNeedsReview(wordData);
 
   const newWord = {
     ...wordData,
