@@ -1,5 +1,5 @@
 import { db } from '../firebase';
-import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, serverTimestamp, onSnapshot, orderBy, writeBatch, arrayUnion, arrayRemove, increment, limit } from 'firebase/firestore';
+import { collection, addDoc, getDocs, getDoc, updateDoc, deleteDoc, doc, query, where, serverTimestamp, onSnapshot, orderBy, writeBatch, arrayUnion, arrayRemove, increment, limit, setDoc } from 'firebase/firestore';
 
 // A word is "Missing Info" (and kept out of review) when required details are missing.
 // Plural is optional: many nouns have none (e.g. Weltraum, Atmung).
@@ -227,6 +227,16 @@ export async function deleteGlobalTag(userId, tagToDelete, words, phrases) {
 // Practice results
 // users/{uid}/practiceSessions/{id}: one document per finished round
 // users/{uid}/practiceStats/{exercise}: lifetime correct/incorrect counts per question id
+// users/{uid}/practiceStats/summary: running totals + rounds per day, so Stats doesn't re-read every round
+
+// Local calendar day, e.g. "2026-10-15"
+export function localDayKey(date = new Date()) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+const summaryRef = (userId) => doc(db, 'users', userId, 'practiceStats', 'summary');
+
 export async function savePracticeSession(userId, exercise, filter, results) {
   const batch = writeBatch(db);
   const correct = results.filter(r => r.correct).length;
@@ -254,7 +264,36 @@ export async function savePracticeSession(userId, exercise, filter, results) {
   });
   batch.set(doc(db, 'users', userId, 'practiceStats', exercise), { questions }, { merge: true });
 
+  batch.set(summaryRef(userId), {
+    rounds: increment(1),
+    answered: increment(results.length),
+    correct: increment(correct),
+    days: { [localDayKey()]: increment(1) }
+  }, { merge: true });
+
   await batch.commit();
+}
+
+// Calls back with the summary, or null when it doesn't exist yet
+export function subscribeToPracticeSummary(userId, callback) {
+  return onSnapshot(summaryRef(userId), (snapshot) => {
+    callback(snapshot.exists() ? snapshot.data() : null);
+  });
+}
+
+// One-time catch-up: rebuild the summary from every saved round (rounds saved before the summary existed)
+export async function rebuildPracticeSummary(userId) {
+  const snapshot = await getDocs(collection(db, 'users', userId, 'practiceSessions'));
+  const summary = { rounds: 0, answered: 0, correct: 0, days: {}, backfilled: true };
+  snapshot.docs.forEach(d => {
+    const s = d.data();
+    const day = localDayKey(s.createdAt?.toDate ? s.createdAt.toDate() : new Date());
+    summary.rounds++;
+    summary.answered += s.total || 0;
+    summary.correct += s.correct || 0;
+    summary.days[day] = (summary.days[day] || 0) + 1;
+  });
+  await setDoc(summaryRef(userId), summary);
 }
 
 export function subscribeToPracticeStats(userId, exercise, callback) {
@@ -263,7 +302,7 @@ export function subscribeToPracticeStats(userId, exercise, callback) {
   });
 }
 
-export function subscribeToPracticeSessions(userId, callback, max = 500) {
+export function subscribeToPracticeSessions(userId, callback, max = 10) {
   const q = query(collection(db, 'users', userId, 'practiceSessions'), orderBy('createdAt', 'desc'), limit(max));
   return onSnapshot(q, (snapshot) => {
     callback(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));

@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWords } from '../context/WordContext';
 import { usePracticeStats } from '../hooks/usePracticeStats';
-import { subscribeToPracticeSessions } from '../utils/firestore';
+import { subscribeToPracticeSessions, subscribeToPracticeSummary, rebuildPracticeSummary, localDayKey } from '../utils/firestore';
 import { articlePracticeData } from '../data/articlePracticeData';
 import { adjectiveEndingsData } from '../data/adjectiveEndingsData';
 
@@ -15,7 +15,6 @@ const exerciseInfo = {
 
 const MATURE_INTERVAL_DAYS = 21;
 
-const dayKey = (date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 const sessionDate = (s) => s.createdAt?.toDate ? s.createdAt.toDate() : new Date();
 const percent = (c, t) => t ? Math.round((c / t) * 100) : 0;
 
@@ -34,13 +33,13 @@ function accuracyByCategory(stats, items, getCategories, order) {
   return order.map(label => ({ label, ...totals[label] }));
 }
 
-function currentStreak(sessions) {
-  const days = new Set(sessions.map(s => dayKey(sessionDate(s))));
+function currentStreak(practiceDays) {
+  const days = new Set(Object.keys(practiceDays || {}));
   const cursor = new Date();
   // Today's practice is optional for keeping the streak alive
-  if (!days.has(dayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+  if (!days.has(localDayKey(cursor))) cursor.setDate(cursor.getDate() - 1);
   let streak = 0;
-  while (days.has(dayKey(cursor))) {
+  while (days.has(localDayKey(cursor))) {
     streak++;
     cursor.setDate(cursor.getDate() - 1);
   }
@@ -94,20 +93,35 @@ export default function Stats() {
   const articleStats = usePracticeStats('articles');
   const adjectiveStats = usePracticeStats('adjectives');
   const genderStats = usePracticeStats('gender');
-  const [sessions, setSessions] = useState([]);
+  const [sessions, setSessions] = useState([]); // only the 10 most recent rounds
+  const [summary, setSummary] = useState(undefined); // undefined = loading, null = not created yet
+  const rebuildStarted = useRef(false);
 
   useEffect(() => {
     if (!currentUser) return;
-    return subscribeToPracticeSessions(currentUser.uid, setSessions);
+    const unsubSessions = subscribeToPracticeSessions(currentUser.uid, setSessions);
+    const unsubSummary = subscribeToPracticeSummary(currentUser.uid, setSummary);
+    return () => {
+      unsubSessions();
+      unsubSummary();
+    };
   }, [currentUser]);
+
+  // Rounds saved before the summary existed aren't counted yet: rebuild it once from all rounds
+  useEffect(() => {
+    if (!currentUser || summary === undefined || summary?.backfilled || rebuildStarted.current) return;
+    rebuildStarted.current = true;
+    rebuildPracticeSummary(currentUser.uid).catch(err => console.error('Failed to rebuild practice summary', err));
+  }, [currentUser, summary]);
 
   const nouns = useMemo(() => words.filter(w => w.type === 'noun' && w.article), [words]);
 
-  const overview = useMemo(() => {
-    const answered = sessions.reduce((sum, s) => sum + (s.total || 0), 0);
-    const correct = sessions.reduce((sum, s) => sum + (s.correct || 0), 0);
-    return { answered, accuracy: percent(correct, answered), streak: currentStreak(sessions) };
-  }, [sessions]);
+  const overview = useMemo(() => ({
+    rounds: summary?.rounds || 0,
+    answered: summary?.answered || 0,
+    accuracy: percent(summary?.correct || 0, summary?.answered || 0),
+    streak: currentStreak(summary?.days)
+  }), [summary]);
 
   const vocab = useMemo(() => {
     const items = [...words, ...phrases];
@@ -157,7 +171,7 @@ export default function Stats() {
 
       <div className="stats-grid" style={{ marginBottom: '1.5rem' }}>
         <StatTile label="Practice streak" value={`${overview.streak} ${overview.streak === 1 ? 'day' : 'days'}`} />
-        <StatTile label="Questions answered" value={overview.answered} sub={`${sessions.length} rounds`} />
+        <StatTile label="Questions answered" value={overview.answered} sub={`${overview.rounds} ${overview.rounds === 1 ? 'round' : 'rounds'}`} />
         <StatTile label="Practice accuracy" value={`${overview.accuracy}%`} />
         <StatTile label="Due for review" value={loading ? '…' : vocab.due} sub={<Link to="/review">Start review</Link>} />
       </div>
@@ -223,7 +237,7 @@ export default function Stats() {
         <h3 style={{ fontSize: '1rem', marginBottom: '1rem' }}>Recent rounds</h3>
         {sessions.length === 0 && <p style={{ opacity: 0.7, fontSize: '0.9rem' }}>No practice rounds yet. <Link to="/practice">Start practising</Link>.</p>}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {sessions.slice(0, 10).map(s => (
+          {sessions.map(s => (
             <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', fontSize: '0.9rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem' }}>
               <div style={{ minWidth: 0 }}>
                 <strong>{exerciseInfo[s.exercise]?.label || s.exercise}</strong>
