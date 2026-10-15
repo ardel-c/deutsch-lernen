@@ -6,6 +6,42 @@ import { collection, writeBatch, doc, serverTimestamp } from 'firebase/firestore
 import { renameGlobalTag, deleteGlobalTag } from '../utils/firestore';
 import { FiEdit2, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 
+const CSV_HEADER = ['Collection', 'Type', 'German', 'English', 'Article', 'Plural', 'Notes', 'Tags'];
+
+const csvColumns = [
+  { name: 'Collection', required: false, example: 'word', description: '"word" or "phrase". Defaults to word.' },
+  { name: 'Type', required: false, example: 'noun', description: 'noun, verb, adjective, adverb, preposition or other. Leave empty for phrases.' },
+  { name: 'German', required: true, example: 'Tisch', description: 'The German word or phrase.' },
+  { name: 'English', required: true, example: 'table', description: 'The translation.' },
+  { name: 'Article', required: false, example: 'der', description: 'der, die or das (nouns only).' },
+  { name: 'Plural', required: false, example: 'Tische', description: 'Plural form (nouns only).' },
+  { name: 'Notes', required: false, example: '', description: 'Any extra notes.' },
+  { name: 'Tags', required: false, example: 'möbel;a1', description: 'Separate multiple tags with a semicolon (;).' }
+];
+
+const sampleRows = [
+  ['word', 'noun', 'Tisch', 'table', 'der', 'Tische', '', 'möbel;a1'],
+  ['word', 'verb', 'essen', 'to eat', '', '', 'isst – aß – hat gegessen', 'a1'],
+  ['word', 'adjective', 'schön', 'beautiful', '', '', '', ''],
+  ['phrase', '', 'Wie geht es dir?', 'How are you?', '', '', 'informal', 'greetings']
+];
+
+function downloadCsv(rows, filename) {
+  const csvContent = rows.map(e => e.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]); // UTF-8 Byte Order Mark
+  const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+const cellStyle = { padding: '0.5rem', borderBottom: '1px solid var(--border)', textAlign: 'left', verticalAlign: 'top' };
+
 export default function DataManagement() {
   const { currentUser } = useAuth();
   const { words, phrases } = useWords();
@@ -55,9 +91,7 @@ export default function DataManagement() {
   };
 
   const handleExport = () => {
-    const rows = [
-      ['Collection', 'Type', 'German', 'English', 'Article', 'Plural', 'Notes', 'Tags']
-    ];
+    const rows = [CSV_HEADER];
 
     const sanitize = (str) => (str || '').replace(/[\r\n]+/g, ' ');
 
@@ -87,16 +121,7 @@ export default function DataManagement() {
       ]);
     });
 
-    const csvContent = rows.map(e => e.map(item => `"${String(item).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]); // UTF-8 Byte Order Mark
-    const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'deutsch_lernen_backup.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    downloadCsv(rows, 'deutsch_lernen_backup.csv');
   };
 
   const handleImport = async (e) => {
@@ -274,26 +299,72 @@ export default function DataManagement() {
           <div>
             <h3>Import Data</h3>
             <p style={{ opacity: 0.8, marginBottom: '1rem' }}>Upload a CSV file to add multiple words or phrases at once. Exact duplicates will be skipped automatically.</p>
-            <input 
-              type="file" 
-              accept=".csv" 
-              onChange={handleImport} 
-              disabled={importing}
-              style={{ display: 'none' }}
-              id="csv-upload"
-            />
-            <label 
-              htmlFor="csv-upload" 
-              style={{ 
-                ...buttonStyle,
-                background: 'var(--card-bg)', 
-                color: 'var(--text-color)', 
-                border: '1px solid var(--border)',
-                cursor: importing ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {importing ? 'Importing...' : 'Select CSV File'}
-            </label>
+
+            <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>
+              The first row must be a header row (it is skipped). Columns must be in this order:
+            </p>
+            <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                <thead>
+                  <tr>
+                    <th style={cellStyle}>#</th>
+                    <th style={cellStyle}>Column</th>
+                    <th style={cellStyle}>Example</th>
+                    <th style={cellStyle}>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {csvColumns.map((col, i) => (
+                    <tr key={col.name}>
+                      <td style={{ ...cellStyle, opacity: 0.6 }}>{i + 1}</td>
+                      <td style={{ ...cellStyle, fontWeight: '600', whiteSpace: 'nowrap' }}>
+                        {col.name}{col.required && <span style={{ color: 'var(--danger)' }} title="Required"> *</span>}
+                      </td>
+                      <td style={{ ...cellStyle, whiteSpace: 'nowrap' }}><code>{col.example || '—'}</code></td>
+                      <td style={{ ...cellStyle, opacity: 0.85 }}>{col.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <p style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>Sample file:</p>
+            <pre style={{ background: 'var(--bg-color)', border: '1px solid var(--border)', borderRadius: '8px', padding: '0.75rem', fontSize: '0.8rem', overflowX: 'auto', marginBottom: '1rem' }}>
+              {[CSV_HEADER, ...sampleRows].map(row => row.join(',')).join('\n')}
+            </pre>
+            <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '1rem' }}>
+              <span style={{ color: 'var(--danger)' }}>*</span> Required. Rows without German or English are skipped. Tip: an exported backup uses the same format.
+            </p>
+
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => downloadCsv([CSV_HEADER, ...sampleRows], 'deutsch_lernen_sample.csv')}
+                style={{ ...buttonStyle, background: 'var(--card-bg)', color: 'var(--primary)', border: '1px solid var(--primary)' }}
+              >
+                Download Sample CSV
+              </button>
+              <input 
+                type="file" 
+                accept=".csv" 
+                onChange={handleImport} 
+                disabled={importing}
+                style={{ display: 'none' }}
+                id="csv-upload"
+              />
+              <label 
+                htmlFor="csv-upload" 
+                style={{ 
+                  ...buttonStyle,
+                  background: 'var(--card-bg)', 
+                  color: 'var(--text-color)', 
+                  border: '1px solid var(--border)',
+                  cursor: importing ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {importing ? 'Importing...' : 'Select CSV File'}
+              </label>
+            </div>
           </div>
         </div>
       </div>
