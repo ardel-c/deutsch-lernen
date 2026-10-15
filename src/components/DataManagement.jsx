@@ -4,6 +4,7 @@ import { useWords } from '../context/WordContext';
 import { db } from '../firebase';
 import { collection, writeBatch, doc, serverTimestamp } from 'firebase/firestore';
 import { renameGlobalTag, deleteGlobalTag } from '../utils/firestore';
+import { parseCsv } from '../utils/csv';
 import { FiEdit2, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 
 const CSV_HEADER = ['Collection', 'Type', 'German', 'English', 'Article', 'Plural', 'Notes', 'Tags'];
@@ -136,8 +137,8 @@ export default function DataManagement() {
       try {
         const text = event.target.result;
         
-        const lines = text.split('\n').filter(line => line.trim());
-        if (lines.length <= 1) {
+        const rows = parseCsv(text);
+        if (rows.length <= 1) {
           setMessage('File is empty or invalid.');
           setImporting(false);
           return;
@@ -146,19 +147,28 @@ export default function DataManagement() {
         const batch = writeBatch(db);
         let addedCount = 0;
         let skippedCount = 0;
+        const invalidRows = [];
+        const seenInFile = new Set();
 
-        for (let i = 1; i < lines.length; i++) {
-          const cleanRow = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').replace(/""/g, '"'));
-          if (cleanRow.length < 4) continue;
+        for (let i = 1; i < rows.length; i++) {
+          const rowNumber = i + 1;
+          const [colType = '', type = '', german = '', english = '', article = '', plural = '', notes = '', tagsStr = ''] = rows[i].map(col => col.trim());
 
-          const [colType, type, german, english, article, plural, notes, tagsStr] = cleanRow;
+          if (!german || !english) {
+            invalidRows.push(`row ${rowNumber} (missing ${!german ? 'German' : 'English'})`);
+            continue;
+          }
 
-          if (!german || !english) continue;
-
-          const isPhrase = colType === 'phrase' || type.toLowerCase() === 'phrase';
+          const isPhrase = colType.toLowerCase() === 'phrase' || type.toLowerCase() === 'phrase';
+          const fileKey = `${isPhrase ? 'phrase' : 'word'}:${german.toLowerCase()}`;
+          if (seenInFile.has(fileKey)) {
+            skippedCount++;
+            continue;
+          }
+          seenInFile.add(fileKey);
 
           if (isPhrase) {
-            const exists = phrases.find(p => p.phrase.toLowerCase() === german.toLowerCase());
+            const exists = phrases.find(p => p.phrase?.toLowerCase() === german.toLowerCase());
             if (exists) {
               skippedCount++;
               continue;
@@ -170,7 +180,7 @@ export default function DataManagement() {
               phrase: german,
               english,
               notes: notes || '',
-              tags: tagsStr ? tagsStr.split(';').filter(Boolean) : [],
+              tags: tagsStr ? tagsStr.split(';').map(t => t.trim()).filter(Boolean) : [],
               createdAt: serverTimestamp(),
               nextReviewDate: new Date().toISOString(),
               interval: 0,
@@ -179,7 +189,7 @@ export default function DataManagement() {
             });
             addedCount++;
           } else {
-            const exists = words.find(w => w.word.toLowerCase() === german.toLowerCase());
+            const exists = words.find(w => w.word?.toLowerCase() === german.toLowerCase());
             if (exists) {
               skippedCount++;
               continue;
@@ -188,14 +198,14 @@ export default function DataManagement() {
             const newRef = doc(collection(db, 'words'));
             batch.set(newRef, {
               userId: currentUser.uid,
-              type: type || 'other',
+              type: type.toLowerCase() || 'other',
               word: german,
               english,
-              article: article || '',
+              article: article.toLowerCase(),
               plural: plural || '',
               notes: notes || '',
-              tags: tagsStr ? tagsStr.split(';').filter(Boolean) : [],
-              needsReview: (type === 'noun' && (!article || !plural)),
+              tags: tagsStr ? tagsStr.split(';').map(t => t.trim()).filter(Boolean) : [],
+              needsReview: (type.toLowerCase() === 'noun' && (!article || !plural)),
               createdAt: serverTimestamp(),
               nextReviewDate: new Date().toISOString(),
               interval: 0,
@@ -210,7 +220,10 @@ export default function DataManagement() {
           await batch.commit();
         }
         
-        setMessage(`Import complete! Added ${addedCount} items. Skipped ${skippedCount} duplicates.`);
+        setMessage(
+          `Import complete! Added ${addedCount} items. Skipped ${skippedCount} duplicates.` +
+          (invalidRows.length ? ` Could not read ${invalidRows.length}: ${invalidRows.join(', ')}.` : '')
+        );
         e.target.value = null; // reset input
       } catch (err) {
         console.error(err);
