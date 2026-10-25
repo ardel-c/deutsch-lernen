@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useWords } from '../context/WordContext';
-import { addWord, addPhrase } from '../utils/firestore';
+import { addWord, addPhrase, isSameWord } from '../utils/firestore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import TagsInput from './TagsInput';
 import RichTextEditor from './RichTextEditor';
@@ -49,7 +49,7 @@ export default function AddItem() {
     e.preventDefault();
     if (!word || !english) return;
     
-    const duplicate = words.find(w => w.word.trim().toLowerCase() === word.trim().toLowerCase());
+    const duplicate = words.find(w => isSameWord(w, word, wordType));
     if (duplicate) {
       setDuplicateError({ type: 'word', item: duplicate });
       return;

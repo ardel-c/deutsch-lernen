@@ -241,3 +241,77 @@ input:focus, select:focus {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Review: fits one screen; only the card body scrolls */
+.review-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.review-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.review-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+}
+
+.review-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+
+/* margin: auto centres short cards and lets long ones start at the top */
+.review-body-inner {
+  margin: auto 0;
+}
+
+.review-question {
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.review-word {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.review-actions {
+  flex-shrink: 0;
+  padding-top: 1rem;
+}
+
+.review-rate {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.review-rate button {
+  padding: 0.75rem 0.25rem;
+}

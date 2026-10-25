@@ -9,6 +9,11 @@ export function computeNeedsReview(wordData) {
   return false;
 }
 
+// Same German word and same type (so essen/Essen or arm/Arm can both exist)
+export function isSameWord(existing, word, type) {
+  return existing.word?.trim().toLowerCase() === word.trim().toLowerCase() && (existing.type || 'other') === type;
+}
+
 export async function addWord(userId, wordData) {
   const wordsRef = collection(db, 'words');
   const needsReview = computeNeedsReview(wordData);

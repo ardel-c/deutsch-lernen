@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useWords } from '../context/WordContext';
 import { db } from '../firebase';
 import { collection, writeBatch, doc, serverTimestamp } from 'firebase/firestore';
-import { renameGlobalTag, deleteGlobalTag, computeNeedsReview } from '../utils/firestore';
+import { renameGlobalTag, deleteGlobalTag, computeNeedsReview, isSameWord } from '../utils/firestore';
 import { parseCsv } from '../utils/csv';
 import { FiEdit2, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 
@@ -178,7 +178,9 @@ export default function DataManagement() {
           }
 
           const isPhrase = colType.toLowerCase() === 'phrase' || type.toLowerCase() === 'phrase';
-          const fileKey = `${isPhrase ? 'phrase' : 'word'}:${german.toLowerCase()}`;
+          const wordType = type.toLowerCase() || 'other';
+          // Words are duplicates only with the same type: essen (verb) / Essen (noun), arm / Arm
+          const fileKey = isPhrase ? `phrase:${german.toLowerCase()}` : `word:${wordType}:${german.toLowerCase()}`;
           if (seenInFile.has(fileKey)) {
             skippedCount++;
             continue;
@@ -207,7 +209,7 @@ export default function DataManagement() {
             });
             addedCount++;
           } else {
-            const exists = words.find(w => w.word?.toLowerCase() === german.toLowerCase());
+            const exists = words.find(w => isSameWord(w, german, wordType));
             if (exists) {
               skippedCount++;
               continue;
@@ -216,14 +218,14 @@ export default function DataManagement() {
             const newRef = doc(collection(db, 'words'));
             batch.set(newRef, {
               userId: currentUser.uid,
-              type: type.toLowerCase() || 'other',
+              type: wordType,
               word: german,
               english,
               article: article.toLowerCase(),
               plural: plural || '',
               notes: notes || '',
               tags: tagsStr ? tagsStr.split(';').map(t => t.trim()).filter(Boolean) : [],
-              needsReview: computeNeedsReview({ type: type.toLowerCase() || 'other', article }),
+              needsReview: computeNeedsReview({ type: wordType, article }),
               createdAt: serverTimestamp(),
               nextReviewDate: new Date().toISOString(),
               interval: 0,

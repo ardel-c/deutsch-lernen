@@ -5,6 +5,7 @@ import { useWords } from '../context/WordContext';
 import { FiTrash2, FiAlertCircle, FiEdit2, FiVolume2, FiX, FiPlus } from 'react-icons/fi';
 import { useNavigate, useLocation } from 'react-router-dom';
 import FormattedText from './FormattedText';
+import { speakGerman } from '../utils/speech';
 
 export default function WordList() {
   const { currentUser } = useAuth();
@@ -52,11 +53,6 @@ export default function WordList() {
     );
   };
 
-  const speakGerman = (text) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'de-DE';
-    window.speechSynthesis.speak(utterance);
-  };
   
   useEffect(() => {
     if (location.state?.tab) {
